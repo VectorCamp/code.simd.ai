@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<style>
+    body.vscode {
+        color: var(--vscode-editor-foreground);
+        background-color: var(--vscode-editor-background);
+        font-family: var(--vscode-font-family);
+        font-size: var(--vscode-font-size);
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        height: 98vh;
+    }
+    body.vscode[data-theme='dark'] .message {
+        background-color: #2d2d2d; /* light grey on dark theme */
+        color: var(--vscode-editor-foreground);
+    }
+    body.vscode[data-theme='light'] .message {
+        background-color: #f5f5f5; /* lighter grey on light theme */
+        color: var(--vscode-editor-foreground);
+    }
+    #chat {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+
+    .message {
+        max-width: 80%;
+        margin: 6px 0;
+        padding: 8px 12px;
+        border-radius: 10px;
+        white-space: pre-wrap;
+        background-color: #f0f0f0;
+        color: var(--vscode-editor-foreground);
+        background-color: var(--vscode-editor-background);
+    }
+
+    .user {
+        color: var(--vscode-editor-foreground);
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .bot {
+        color: var(--vscode-editor-foreground);
+        align-self: flex-start;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: conic-gradient(from 0deg, #FFA500, #FF6600, #FFA500);
+        -webkit-mask:
+            radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px));
+        mask:
+            radial-gradient(farthest-side, transparent calc(100% - 2px), black calc(100% - 2px));
+        animation: spin 1s linear infinite;
+        margin-left: 5px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }   
+    }
+
+    textarea {
+        width: 100%;
+        height: 60px;
+        resize: none;
+        padding: 6px 8px;
+        background-color: var(--vscode-input-background);
+        color: var(--vscode-input-foreground);
+    }
+
+    textarea:focus {
+        border: 3px solid;
+        border-image: linear-gradient(to right, #FFA500, #FF6600) 1;
+        outline: none; /* optional to remove default focus outline */
+    }
+    .input-container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+        padding-bottom: 8px;
+    }
+
+    button {
+        background: linear-gradient(to right, #FFA500, #FF6600);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: wait;
+    }
+    .container {
+        width: 600px;
+        max-width: 100%;
+        margin: 0 auto;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .gradient-text {
+        background: linear-gradient(to right, #FFA500, #FF6600);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        font-weight: bold;
+        display: inline-block; 
+    }
+
+    .input-container {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+        padding-bottom: 8px;
+    }
+
+    .button-column {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .modal {
+        position: fixed;
+        z-index: 9999;
+        left: 0; top: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-content {
+        background: var(--vscode-editor-background, #fff);
+        color: var(--vscode-editor-foreground, #222);
+        padding: 24px 32px;
+        border-radius: 8px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+        min-width: 260px;
+    }
+    .modal-buttons {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-top: 16px;
+    }
+    #input {
+        width: 100%;
+        min-height: 60px;
+        max-height: 400px;
+        font-size: 14px;
+        padding: 8px;
+        resize: none; /* optional: disable manual resizing */
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+</style>
+</head>
+<body class="vscode">
+<div class="container">
+    <div id="chat"></div>
+
+    <div class="input-container">
+    <textarea id="input" placeholder="Ask SIMD.ai..."></textarea>
+    <div class="button-column">
+        <button id="sendBtn" onclick="sendMessage()">Send</button>
+        <button id="clearBtn">Clear History</button>
+    </div>
+    </div>
+</div>
+
+
+<div id="confirmModal" class="modal" style="display:none;">
+    <div class="modal-content">
+    <p>Are you sure you want to clear chat history?</p>
+    <div class="modal-buttons">
+        <button id="confirmYes">Yes</button>
+        <button id="confirmNo">No</button>
+    </div>
+    </div>
+</div>
+<script src="${markedUri}"></script>
+<script>
+    const vscode = acquireVsCodeApi();
+    const botLogoUri = "${botLogoUri}";
+
+    const input = document.getElementById('input');
+
+    input.addEventListener('input', () => {
+        input.style.height = 'auto'; // reset height
+        input.style.height = Math.min(input.scrollHeight, 400) + 'px'; // grow up to 400px
+    });
+
+    function addMessage(text, className) {
+        const chat = document.getElementById('chat');
+        const div = document.createElement('div');
+        div.className = 'message ' + className;
+        div.textContent = text;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+    function renderHistory(messages) {
+        for (const msg of messages) {
+            if (msg.startsWith('SIMDAIuser: ')) {
+                const userText = msg.replace('SIMDAIuser: ', '');
+                addMessage(userText, 'user');
+            } else if (msg.startsWith('SIMDAIbot: ')) {
+                const botText = msg.replace('SIMDAIbot: ', '');
+                const botName = 'SIMD.ai';
+                const botImageUrl = botLogoUri;
+                addBotResponse(botText, botName, botImageUrl);
+            }
+        }
+    }
+    function addSpinner() {
+        const chat = document.getElementById('chat');
+        const div = document.createElement('div');
+        div.className = 'message bot';
+        div.id = 'spinner';
+        div.innerHTML = '<span class="gradient-text">SIMD.ai</span> is thinking <span class="spinner"></span>';
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function removeSpinner() {
+        const spinner = document.getElementById('spinner');
+        if (spinner) spinner.remove();
+    }
+    
+    
+    function codeBlocksToTextareas(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const codeBlocks = doc.querySelectorAll('pre > code');
+
+        codeBlocks.forEach(code => {
+            const pre = code.parentElement;
+            const decoded = code.innerHTML
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'");
+
+            const id = 'code-' + Math.random().toString(36).substr(2, 9);
+
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.marginBottom = '8px';
+            wrapper.style.display = 'inline-block';
+            wrapper.style.maxWidth = '100%';
+
+            const button = document.createElement('button');
+            button.className = 'copy-btn';
+            button.setAttribute('data-target', id);
+            button.style.position = 'absolute';
+            button.style.top = '8px';
+            button.style.right = '8px';
+            button.style.zIndex = '10';
+            button.style.padding = '4px 8px';
+            button.style.fontSize = '12px';
+            button.textContent = 'Copy';
+
+            const textarea = document.createElement('textarea');
+            textarea.id = id;
+            textarea.className = 'chat-code';
+            textarea.readOnly = true;
+            textarea.style.width = '400px';
+            textarea.style.minHeight = '180px';
+            textarea.style.overflowX = 'auto';
+            textarea.style.resize = 'both';
+            textarea.style.paddingTop = '30px'; // avoid overlapping with button
+            textarea.textContent = decoded;
+            
+            wrapper.appendChild(button);   // Button first
+            wrapper.appendChild(textarea); // Then textarea
+            pre.replaceWith(wrapper);
+        });
+        return doc.body.innerHTML;
+    }
+
+
+    function addBotResponse(text, botName, botImageUrl) {
+        const chat = document.getElementById('chat');
+        const container = document.createElement('div');
+        container.className = 'message bot';
+        container.style.display = 'flex';
+        container.style.alignItems = 'flex-start';
+        container.style.gap = '10px';
+
+        // Bot image
+        const img = document.createElement('img');
+        img.src = botImageUrl;
+        img.alt = botName;
+        img.style.width = '40px';
+        img.style.height = '40px';
+        img.style.borderRadius = '50%';
+        img.style.objectFit = 'cover';
+        img.style.flexShrink = '0';
+
+        // Text container for bot name and response
+        const textContainer = document.createElement('div');
+        textContainer.style.display = 'flex';
+        textContainer.style.flexDirection = 'column';
+
+        const nameElem = document.createElement('div');
+        const gradientSpan = document.createElement('span');
+        gradientSpan.className = 'gradient-text';
+        gradientSpan.textContent = botName;
+        nameElem.appendChild(gradientSpan);
+        nameElem.style.fontWeight = 'bold';
+        nameElem.style.marginBottom = '4px';
+
+        const responseElem = document.createElement('div');
+        try {
+            // Parse markdown and handle code blocks
+            // const parsedText = marked.parse(text);
+            let html = marked.parse(text);
+            html = codeBlocksToTextareas(html);
+            responseElem.innerHTML = html;
+            // console.log(parsedText);
+            // responseElem.innerHTML = parsedText;
+            
+            // Add copy buttons to code blocks
+            // addCopyButtonsToCodeBlocks(responseElem);
+            
+        } catch (error) {
+            console.error('Error parsing markdown:', error);
+            responseElem.textContent = text; // Fallback to plain text
+        }
+
+        textContainer.appendChild(nameElem);
+        textContainer.appendChild(responseElem);
+
+        container.appendChild(img);
+        container.appendChild(textContainer);
+
+        chat.appendChild(container);
+        chat.scrollTop = chat.scrollHeight;
+    }
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('copy-btn')) {
+            const targetId = e.target.getAttribute('data-target');
+            const textarea = document.getElementById(targetId);
+            if (textarea) {
+                textarea.select();
+                document.execCommand('copy');
+                e.target.textContent = 'Copied!';
+                setTimeout(() => e.target.textContent = 'Copy', 1000);
+            }
+        }
+    });
+
+
+    function sendMessage() {
+        const input = document.getElementById('input');
+        const text = input.value.trim();    
+        if (!text) return;  
+            input.value = '';
+            addMessage(text, 'user');
+            addSpinner();
+            document.getElementById('sendBtn').disabled = true;
+
+            vscode.postMessage({ type: 'send', text });
+        }
+        function clearChat() {
+            const chat = document.getElementById('chat');
+            chat.innerHTML = '';
+        }
+        function insertTextIntoChatInput(text) {
+        const chatInput = document.getElementById('input');
+        
+        if (chatInput) {
+            chatInput.value = text;
+            chatInput.focus();
+            chatInput.style.height = 'auto';
+            chatInput.style.height = Math.min(chatInput.scrollHeight, 400) + 'px';
+        }
+            
+        }
+        document.getElementById('input').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            if (sendBtn.disabled) return; // Prevent sending if already waiting for reply
+            event.preventDefault(); // prevent newline
+            sendMessage(); // call your send function
+        }
+    });
+    window.addEventListener('message', event => {
+        const message = event.data;
+        if (message.type === 'history') {
+            clearChat(); 
+            renderHistory(message.messages); // your render function
+        } else if (message.type === 'response') {
+            removeSpinner();
+            const botName = 'SIMD.ai';
+            const botImageUrl = botLogoUri;
+            addBotResponse(message.text, botName, botImageUrl);
+            document.getElementById('sendBtn').disabled = false;
+        } else if (message.command === 'insertUserMessage') {
+            insertTextIntoChatInput(message.text);
+        }
+    });
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display = 'flex';
+    });
+    document.getElementById('confirmYes').addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display = 'none';
+        vscode.postMessage({ type: 'clearHistory' });
+    });
+    document.getElementById('confirmNo').addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display = 'none';
+    });
+    vscode.postMessage({ type: 'requestHistory' });
+</script>
+</body>
+</html>

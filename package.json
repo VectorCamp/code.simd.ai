@@ -1,0 +1,207 @@
+{
+  "name": "code.simd.ai",
+  "displayName": "code.simd.ai",
+  "description": "VScode plugin for porting of code between different cpu architectures",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.102.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "SIMD AI Pilot Configuration",
+      "properties": {
+        "code.simd.ai.apiToken": {
+          "type": "string",
+          "default": "",
+          "description": "Your SIMD AI API token. Get it from https://simd.info.",
+          "secret": true
+        }
+      }
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "code-simd-ai-sidebar",
+          "title": "SIMD.ai",
+          "icon": "media/splash-dark.png"
+        }
+      ]
+    },
+    "views": {
+      "code-simd-ai-sidebar": [
+        {
+          "id": "code.simd.ai.chatView",
+          "name": "SIMD Chat",
+          "type": "webview",
+          "icon": "media/splash-dark.png"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "code.simd.ai.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "code.simd.ai.translateSSEToNeon",
+        "title": "Arm NEON"
+      },
+      {
+        "command": "code.simd.ai.translateNeonToSSE",
+        "title": "SSE4.2"
+      },
+      {
+        "command": "code.simd.ai.translateSSEToVSX",
+        "title": "Power VSX"
+      },
+      {
+        "command": "code.simd.ai.translateVSXToSSE",
+        "title": "SSE4.2"
+      },
+      {
+        "command": "code.simd.ai.translateNeonToVSX",
+        "title": "Power VSX"
+      },
+      {
+        "command": "code.simd.ai.translateVSXToNeon",
+        "title": "Arm NEON"
+      },
+      {
+        "command": "code.simd.ai.acceptTranslation",
+        "title": "Accept Translation"
+      },
+      {
+        "command": "code.simd.ai.rejectTranslation",
+        "title": "Reject Translation"
+      },
+      {
+        "command": "code.simd.ai.editSIMD",
+        "title": "Edit SIMD"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "code.simd.ai.submenu",
+        "label": "SIMD.ai",
+        "group": "navigation"
+      },
+      {
+        "id": "code.simd.ai.submenu.sse",
+        "label": "Translate from SSE4.2 to",
+        "group": "navigation"
+      },
+      {
+        "id": "code.simd.ai.submenu.neon",
+        "label": "Translate from Arm NEON to",
+        "group": "navigation"
+      },
+      {
+        "id": "code.simd.ai.submenu.vsx",
+        "label": "Translate from Power VSX to",
+        "group": "navigation"
+      }
+    ],
+    "activationEvents": [
+      "onCommand:code.simd.ai.translateSSEToNeon"
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "code.simd.ai.editSIMD",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "submenu": "code.simd.ai.submenu",
+          "when": "editorHasSelection",
+          "group": "navigation"
+        }
+      ],
+      "code.simd.ai.submenu": [
+        {
+          "submenu": "code.simd.ai.submenu.sse",
+          "when": "editorHasSelection"
+        },
+        {
+          "submenu": "code.simd.ai.submenu.neon",
+          "when": "editorHasSelection"
+        },
+        {
+          "submenu": "code.simd.ai.submenu.vsx",
+          "when": "editorHasSelection"
+        }
+      ],
+      "code.simd.ai.submenu.sse": [
+        {
+          "command": "code.simd.ai.translateSSEToNeon",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code.simd.ai.translateSSEToVSX",
+          "when": "editorHasSelection"
+        }
+      ],
+      "code.simd.ai.submenu.neon": [
+        {
+          "command": "code.simd.ai.translateNeonToSSE",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code.simd.ai.translateNeonToVSX",
+          "when": "editorHasSelection"
+        }
+      ],
+      "code.simd.ai.submenu.vsx": [
+        {
+          "command": "code.simd.ai.translateVSXToSSE",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "code.simd.ai.translateVSXToNeon",
+          "when": "editorHasSelection"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "build": "npx esbuild src/extension.ts --bundle --platform=node --outfile=dist/extension.js --external:vscode "
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.102.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.23.1",
+    "eslint": "^9.9.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "marked": "^16.1.1"
+  },
+  "files": [
+    "resources"
+  ]
+}
