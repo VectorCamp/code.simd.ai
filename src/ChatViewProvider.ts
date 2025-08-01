@@ -144,16 +144,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
   }
   private getHtml() {
+    
+    if (!this._view) {
+      return; // or throw an error or return fallback HTML
+    }
     const webview = this._view?.webview;
-    // const botLogoUri = webview?.asWebviewUri(
-    //   vscode.Uri.joinPath(this.context.extensionUri, 'media', 'BotLogo.svg')
-    // );
-    // const markedUri = webview?.asWebviewUri(
-    //   vscode.Uri.joinPath(this.context.extensionUri, 'media', 'marked.js')
-    // );
-    // return `
-     
-    // `;
     return getChatWebviewHtml(this.context, webview);
   }
 
