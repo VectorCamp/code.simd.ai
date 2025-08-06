@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import { getChatWebviewHtml } from './ChatWebviewHtml';
-import { getChatHistory, saveChatHistory, clearChatHistory } from './utils/history';
+import { getChatHistory, saveChatHistory, clearChatHistory, getAllSessions } from './utils/history';
 import { extractMessages } from './utils/messageParser';
 import { callSimdAiWithHistory } from './api/simdAi';
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'code_simd_ai_chatView';
   private _view?: vscode.WebviewView;
+
+  private currentSessionId: string = 'default';
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
@@ -25,32 +27,57 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     webview.options = { enableScripts: true };
     webview.html = getChatWebviewHtml(this.context, webview);
 
+    // webview.onDidReceiveMessage(async message => {
+    //   switch (message.type) {
+    //     case 'send':
+    //       await this.handleUserMessage(message.text);
+    //       break;
+    //     case 'requestHistory':
+    //       webview.postMessage({ type: 'history', messages: getChatHistory(this.context) });
+    //       break;
+    //     case 'clearHistory':
+    //       await clearChatHistory(this.context);
+    //       webview.postMessage({ type: 'history', messages: [] });
+    //       break;
+    //   }
+    // });
+  // }
     webview.onDidReceiveMessage(async message => {
       switch (message.type) {
         case 'send':
           await this.handleUserMessage(message.text);
           break;
         case 'requestHistory':
-          webview.postMessage({ type: 'history', messages: getChatHistory(this.context) });
+          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
           break;
         case 'clearHistory':
-          await clearChatHistory(this.context);
+          await clearChatHistory(this.context, this.currentSessionId);
           webview.postMessage({ type: 'history', messages: [] });
+          break;
+        case 'switchSession':
+          this.currentSessionId = message.sessionId;
+          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
+          break;
+        case 'requestSessionList':
+          const allSessions = getAllSessions(this.context);
+          const sessionIds = Object.keys(allSessions);
+          webview.postMessage({ type: 'sessionList', sessions: sessionIds, currentSession: this.currentSessionId });
           break;
       }
     });
   }
 
+
   private async handleUserMessage(userText: string) {
     const webview = this._view?.webview;
     if (!webview) return;
 
-    const rawHistory = getChatHistory(this.context);
+    const rawHistory = getChatHistory(this.context, this.currentSessionId);
     const contextMessages = extractMessages(rawHistory);
     contextMessages.push({ role: 'user', content: userText });
 
     const reply = await callSimdAiWithHistory(contextMessages);
-    await saveChatHistory(this.context, userText, reply);
+    await saveChatHistory(this.context, this.currentSessionId, userText, reply);
 
     webview.postMessage({ type: 'response', text: reply });
   }
