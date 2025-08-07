@@ -199,7 +199,8 @@
   },
   "dependencies": {
     "dotenv": "^17.2.1",
-    "marked": "^16.1.1"
+    "marked": "^16.1.1",
+    "node-fetch": "^3.3.2"
   },
   "files": [
     "resources"

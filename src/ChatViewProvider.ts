@@ -8,7 +8,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'code_simd_ai_chatView';
   private _view?: vscode.WebviewView;
 
-  private currentSessionId: string = 'default';
+  private currentSessionId: string = 'Chat 1';
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
@@ -58,11 +58,23 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           this.currentSessionId = message.sessionId;
           webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
           break;
+        // case 'requestSessionList':
+        //   const allSessions = getAllSessions(this.context);
+        //   const sessionIds = Object.keys(allSessions);
+        //   webview.postMessage({ type: 'sessionList', sessions: sessionIds, currentSession: this.currentSessionId });
+        //   break;
+        case 'deleteSession':
+            await clearChatHistory(this.context, message.sessionId);
+            break;
+
         case 'requestSessionList':
-          const allSessions = getAllSessions(this.context);
-          const sessionIds = Object.keys(allSessions);
-          webview.postMessage({ type: 'sessionList', sessions: sessionIds, currentSession: this.currentSessionId });
-          break;
+            const sessions = Object.keys(getAllSessions(this.context));
+            webview.postMessage({
+                type: 'sessionList',
+                sessions,
+                currentSession: this.currentSessionId
+            });
+            break;
       }
     });
   }

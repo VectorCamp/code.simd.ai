@@ -189,8 +189,66 @@
     }
 
     label[for="sessionName"] {
-    display: block;
-    margin-bottom: 6px;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .tabs-wrapper {
+        display: flex;
+        align-items: center;
+        overflow: hidden; /* Hide overflow around button */
+        border-bottom: 1px solid var(--vscode-editorWidget-border);
+        padding: 4px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: thin; /* For Firefox */
+        -ms-overflow-style: auto; /* IE 10+ */
+        flex: 1;
+    }
+
+    /* Optional: show a scrollbar only when scrolling */
+    .tabs::-webkit-scrollbar {
+        height: 6px;
+    }
+    .tabs::-webkit-scrollbar-thumb {
+        background-color: var(--vscode-scrollbarSlider-background);
+        border-radius: 3px;
+    }
+    .tabs::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .tab {
+        display: flex;
+        align-items: center;
+        background: var(--vscode-editor-background);
+        color: var(--vscode-editor-foreground);
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--vscode-editorWidget-border);
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+    }
+
+    .tab.active {
+        background-image: linear-gradient(90deg, #FFA500, #FF8C00, #FF4500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: var(--vscode-button-foreground);
+    }
+
+    .tab .close-btn {
+        margin-left: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        color: var(--vscode-editor-foreground);
     }
 </style>
 </head>
@@ -202,26 +260,13 @@
         <textarea id="input" placeholder="Ask SIMD.ai..."></textarea>
         <div class="button-column">
             <button id="sendBtn" onclick="sendMessage()">Send</button>
-            <button id="clearBtn">Clear History</button>
-            <button id="newSessionBtn">New Session</button>
-            <select id="sessionSelector">
-                <option value="default">Chat 1</option>
-            </select>
         </div>
     </div>
-</div>
-
-
-<div id="confirmModal" class="modal" style="display:none;">
-    <div class="modal-content">
-    <p>Are you sure you want to clear chat history?</p>
-    <div class="modal-buttons">
-        <button id="confirmYes">Yes</button>
-        <button id="confirmNo">No</button>
-    </div>
+    <div id="sessionTabsContainer" class="tabs-wrapper">
+        <div id="sessionTabs" class="tabs"></div>
+        <button id="newSessionBtn" title="New session">+</button>
     </div>
 </div>
-
 
 <div id="sessionModal" class="modal" style="display:none;">
     <div class="modal-content">
@@ -232,9 +277,8 @@
             <button id="createSessionBtn">Create</button>
             <button onclick="document.getElementById('sessionModal').style.display='none'">Cancel</button>
         </div>
-        <div id="sessionError" style="color: var(--vscode-editorError-foreground); margin-top: 8px; display: none;">
-            A session with this name already exists.
-        </div>
+        <div id="sessionError" style="color: var(--vscode-editorError-foreground); margin-top: 8px; display: none;"></div>
+
     </div>
 </div>
 
@@ -329,11 +373,11 @@
             textarea.style.minHeight = '180px';
             textarea.style.overflowX = 'auto';
             textarea.style.resize = 'both';
-            textarea.style.paddingTop = '30px'; // avoid overlapping with button
+            textarea.style.paddingTop = '30px'; 
             textarea.textContent = decoded;
             
-            wrapper.appendChild(button);   // Button first
-            wrapper.appendChild(textarea); // Then textarea
+            wrapper.appendChild(button);   
+            wrapper.appendChild(textarea); 
             pre.replaceWith(wrapper);
         });
         return doc.body.innerHTML;
@@ -378,11 +422,6 @@
             let html = marked.parse(text);
             html = codeBlocksToTextareas(html);
             responseElem.innerHTML = html;
-            // console.log(parsedText);
-            // responseElem.innerHTML = parsedText;
-            
-            // Add copy buttons to code blocks
-            // addCopyButtonsToCodeBlocks(responseElem);
             
         } catch (error) {
             console.error('Error parsing markdown:', error);
@@ -446,6 +485,14 @@
             sendMessage(); // call your send function
         }
     });
+
+    function createDefaultTabIfMissing() {
+        const sessionTabsContainer = document.getElementById('sessionTabs');
+
+        if (![...sessionTabsContainer.querySelectorAll('.tab')].some(tab => tab.dataset.id === 'Chat 1')) {
+            createSessionTab('Chat 1', true);
+        }
+    }
     window.addEventListener('message', event => {
         const message = event.data;
         if (message.type === 'history') {
@@ -459,87 +506,148 @@
             document.getElementById('sendBtn').disabled = false;
         } else if (message.command === 'insertUserMessage') {
             insertTextIntoChatInput(message.text);
-        }
-        else if (message.type === 'sessionList') {
-            const selector = document.getElementById('sessionSelector');
-            selector.innerHTML = ''; // Clear existing options
+        } else if (message.type === 'sessionList') {
+            const sessionTabsContainer = document.getElementById('sessionTabs');
+            sessionTabsContainer.innerHTML = ''; 
 
             message.sessions.forEach(sessionId => {
-                const option = document.createElement('option');
-                option.value = sessionId;
-                option.textContent = sessionId === 'default' ? 'Chat 1' : sessionId;
-                selector.appendChild(option);
+                const tab = createSessionTab(sessionId, sessionId === message.currentSession);
             });
-            // Set currently selected session
-            selector.value = message.currentSession || 'default';
-            // Optional: fetch history right away
-            vscode.postMessage({ type: 'requestHistory', sessionId: selector.value });
         }
     });
-    document.getElementById('sessionSelector').addEventListener('change', (e) => {
-        const sessionId = e.target.value;
-        vscode.postMessage({ type: 'switchSession', sessionId });
+    
 
-        vscode.postMessage({ type: 'requestHistory', sessionId });
+    
+
+    function showError(msg) {
+        const errorDiv = document.getElementById('sessionError');
+        if (!errorDiv) return;
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+        setTimeout(() => errorDiv.style.display = 'none', 3000);
+    }
+    function createSessionTab(sessionId, isActive = false) {
+        const sessionTabsContainer = document.getElementById('sessionTabs');
+        const tab = document.createElement('div');
+        tab.classList.add('tab');
+        tab.dataset.id = sessionId;
+        tab.textContent = sessionId;
+
+        if (isActive) {
+            selectSessionTab(tab);
+        }
+
+        const closeBtn = document.createElement('span');
+        closeBtn.textContent = '✕';
+        closeBtn.classList.add('close-btn');
+
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            tab.remove();
+            vscode.postMessage({ type: 'deleteSession', sessionId });
+
+            const remainingTabs = [...sessionTabsContainer.querySelectorAll('.tab')];
+            const newActive = remainingTabs[0];
+
+            if (newActive) {
+                selectSessionTab(newActive);
+                vscode.postMessage({ type: 'switchSession', sessionId: newActive.dataset.id });
+                vscode.postMessage({ type: 'requestHistory', sessionId: newActive.dataset.id });
+            } else {
+                createDefaultTabIfMissing();
+                vscode.postMessage({ type: 'switchSession', sessionId: 'Chat 1' });
+                vscode.postMessage({ type: 'requestHistory', sessionId: 'Chat 1' });
+            }
+        };
+
+        tab.appendChild(closeBtn);
+
+        tab.addEventListener('click', () => {
+            selectSessionTab(tab);
+            vscode.postMessage({ type: 'switchSession', sessionId });
+            vscode.postMessage({ type: 'requestHistory', sessionId });
+        });
+
+        sessionTabsContainer.appendChild(tab);
+        return tab;
+    }
+
+    
+    function selectSessionTab(tabElement) {
+        let currentSessionId = 'Chat 1';
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+        tabElement.classList.add('active');
+        currentSessionId = tabElement.dataset.id;
+        vscode.postMessage({ type: 'switchSession', sessionId: currentSessionId });
+        localStorage.setItem('lastActiveSession', currentSessionId);
+    }
+
+    document.getElementById('sessionTabs').addEventListener('click', (e) => {
+        let currentSessionId = 'Chat 1';
+        const closeBtn = e.target.closest('.close-btn');
+        const tab = e.target.closest('.tab');
+
+        if (closeBtn && tab) {
+            const sessionId = tab.dataset.id;
+            tab.remove();
+            vscode.postMessage({ type: 'deleteSession', sessionId });
+            
+            if (sessionId === currentSessionId) {
+                const firstTab = document.querySelector('.tab');
+                if (firstTab) selectSessionTab(firstTab);
+            }
+            return;
+        }
+
+        if (tab) selectSessionTab(tab);
     });
 
     document.getElementById('newSessionBtn').addEventListener('click', () => {
         document.getElementById('sessionModal').style.display = 'flex';
+
+        const input = document.getElementById('sessionName');
+        input.focus();
     });
 
     document.getElementById('createSessionBtn').addEventListener('click', () => {
         const sessionId = document.getElementById('sessionName').value.trim();
         if (sessionId) {
-            const selector = document.getElementById('sessionSelector');
+            const sessionTabsContainer = document.getElementById('sessionTabs');
             const errorDiv = document.getElementById('sessionError');
+            const defaultTab = document.createElement('div');
+            defaultTab.classList.add('tab', 'active');
+            defaultTab.dataset.id = 'Chat 1';
+            defaultTab.textContent = 'Chat 1';
 
             // Prevent duplicates
-            if ([...selector.options].some(opt => opt.value === sessionId)) {
-                errorDiv.style.display = 'block';
-            //alert('Session already exists.');
+            const alreadyExists = [...sessionTabsContainer.children].some(tab => tab.dataset.id === sessionId);
+            if (alreadyExists) {
+                showError('Session name already exists.');
                 return;
             } else {
-                errorDiv.style.display = 'none'; // hide it if previously shown
+                errorDiv.style.display = 'none';
             }
-
-            const option = document.createElement('option');
-            option.value = sessionId;
-            option.textContent = sessionId;
-            selector.appendChild(option);
-            selector.value = sessionId;
-
+            createSessionTab(sessionId, true);
             vscode.postMessage({ type: 'switchSession', sessionId });
-
-            // Hide modal
+            // Cleanup modal
             document.getElementById('sessionModal').style.display = 'none';
             document.getElementById('sessionName').value = '';
         }
     });
 
 
-    document.getElementById('clearBtn').addEventListener('click', () => {
-        document.getElementById('confirmModal').style.display = 'flex';
-    });
-    document.getElementById('confirmYes').addEventListener('click', () => {
-        document.getElementById('confirmModal').style.display = 'none';
-        vscode.postMessage({ type: 'clearHistory' });
-    });
-    document.getElementById('confirmNo').addEventListener('click', () => {
-        document.getElementById('confirmModal').style.display = 'none';
-    });
     document.getElementById('sessionName').addEventListener('input', () => {
         document.getElementById('sessionError').style.display = 'none';
     });
     document.addEventListener('DOMContentLoaded', () => {
-        const defaultSessionId = 'default';
-        const sessionSelector = document.getElementById('sessionSelector');
-        sessionSelector.value = defaultSessionId;
-
-
+        const defaultSessionId = 'Chat 1';
+        
         const sessionNameInput = document.getElementById('sessionName');
         const sessionModal = document.getElementById('sessionModal');
         const sessionError = document.getElementById('sessionError');
         const createSessionBtn = document.getElementById('createSessionBtn');
+        const lastSessionId = localStorage.getItem('lastActiveSession') || defaultSessionId;
 
         sessionNameInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -552,8 +660,8 @@
                 sessionNameInput.value = '';
             }
         });
-        vscode.postMessage({ type: 'switchSession', sessionId: defaultSessionId });
-        vscode.postMessage({ type: 'requestHistory', sessionId: defaultSessionId });
+        vscode.postMessage({ type: 'switchSession', sessionId: lastSessionId });
+        vscode.postMessage({ type: 'requestHistory', sessionId: lastSessionId });
         vscode.postMessage({ type: 'requestSessionList' });
     });
 </script>
