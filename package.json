@@ -187,6 +187,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/node-fetch": "^2.6.13",
     "@types/vscode": "^1.102.0",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
@@ -200,7 +201,7 @@
   "dependencies": {
     "dotenv": "^17.2.1",
     "marked": "^16.1.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^2.7.0"
   },
   "files": [
     "resources"

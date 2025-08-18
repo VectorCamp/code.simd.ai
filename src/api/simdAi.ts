@@ -26,7 +26,7 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
       return `⚠️ SIMD.ai error: ${res.statusText}`;
     }
 
-    const data = await res.json();
+    const data: any = await res.json();
     return data.choices?.[0]?.message?.content ?? '⚠️ No response content.';
 
   } catch (err: any) {
@@ -63,7 +63,7 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
       const text = (json as any).intrinsics;
       cachedIntrinsics = text
         .split(/\s+/)
-        .map(s => s.trim())
+        .map((s: string) => s.trim())
         .filter(Boolean);
 
       return cachedIntrinsics || [];
@@ -95,7 +95,15 @@ interface TooltipData {
   link_to_doc?: string;
   asm?: string; 
   prototypes?: Prototype[];
-  example?: string;    
+  example?: string;   
+  architectures?: Architecture[]; 
+}
+interface Architecture {
+  simd?: string;
+  architecture?: string;
+  purpose?: string;
+  prototypes?: Prototype[];
+  link_to_doc?: string;
 }
 
 export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | null> {

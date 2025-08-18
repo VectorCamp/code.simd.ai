@@ -1,12 +1,10 @@
-import fetch, { Headers, Request, Response } from 'node-fetch';
+import fetch from 'node-fetch';
+(globalThis as any).fetch = fetch;
+
 import * as vscode from 'vscode';
 import { fetchIntrinsicInfo } from './simdAi';
 
 
-globalThis.fetch = fetch as any;
-globalThis.Headers = Headers as any;
-globalThis.Request = Request as any;
-globalThis.Response = Response as any;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
 
