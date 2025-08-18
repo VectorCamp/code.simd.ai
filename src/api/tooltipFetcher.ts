@@ -1,5 +1,7 @@
 import fetch, { Headers, Request, Response } from 'node-fetch';
 import * as vscode from 'vscode';
+import { fetchIntrinsicInfo } from './simdAi';
+
 
 globalThis.fetch = fetch as any;
 globalThis.Headers = Headers as any;
@@ -10,40 +12,17 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signe
 
 const tooltipCache: Record<string, string> = {};
 
-interface Prototype {
-  key: string;
-  output?: string;
-  inputs?: string[];
-  asm?: string;
-  example?: string;
-}
 
-interface TooltipData {
-  name: string;
-  purpose: string;
-  result?: string;
-  simd?: string;
-  notes?: string;
-  engine?: string;
-  link_to_doc?: string;
-  asm?: string; // For AVX/NEON style
-  prototypes?: Prototype[];
-  example?: string;     // For AVX/NEON style
-}
 
 export async function fetchTooltip(word: string): Promise<string> {
   if (tooltipCache[word]) return tooltipCache[word];
 
   try {
-    const response = await fetch(`https://staging.simd.info:8192/api/c_intrinsic/${encodeURIComponent(word)}`,{
-        headers: {
-          'X-API-Key': 'mermigkis'
-        }
-    });
-    if (!response.ok) return '';
-
-    const data: TooltipData = await response.json();
-
+    const data = await fetchIntrinsicInfo(word);
+    if (!data) {
+      console.warn(`No tooltip found for "${word}"`);
+      return '';
+    }
     
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
