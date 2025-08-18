@@ -14,12 +14,12 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "SIMD AI Pilot Configuration",
+      "title": "Code SIMD ai Configuration",
       "properties": {
         "code.simd.ai.apiToken": {
           "type": "string",
           "default": "",
-          "description": "Your SIMD AI API token. Get it from https://simd.info.",
+          "description": "Your SIMD AI API token. Get it from https://simd.ai/",
           "secret": true
         }
       }
