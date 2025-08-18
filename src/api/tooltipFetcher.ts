@@ -1,4 +1,5 @@
 import fetch, { Headers, Request, Response } from 'node-fetch';
+import * as vscode from 'vscode';
 
 globalThis.fetch = fetch as any;
 globalThis.Headers = Headers as any;
@@ -42,60 +43,66 @@ export async function fetchTooltip(word: string): Promise<string> {
     if (!response.ok) return '';
 
     const data: TooltipData = await response.json();
-    const md: string[] = [];
 
-    const simdLink = `https://staging.simd.info:8192/c/${encodeURIComponent(data.name)}`;
-    const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');
-    md.push(`### [${data.name}](${simdLink})${simdInfo ? ` (${simdInfo})` : ''}\n`);
-    const purpose = data.purpose?.replace(/<\/?[^>]+(>|$)/g, '').trim();
-    if (purpose) md.push(`${purpose}\n`);
     
-    if (data.notes && data.notes.trim()) md.push(`**Notes:** ${data.notes.trim()}`);
+    const md = new vscode.MarkdownString();
+    md.isTrusted = true;
+    md.supportHtml = true;
 
-    const isVSX = (data.simd?.toLowerCase() === 'ibm-z' || data.engine?.toLowerCase() === 'ibm-z');
+   
+    // Handle new structure with multiple architectures
+    if (Array.isArray(data.architectures) && data.architectures.length > 0) {
+      for (const arch of data.architectures) {
 
-    // Prototypes (with VSX/IBM-Z support)
-    if (data.prototypes?.length) {
-        md.push(`\n**Prototypes:**\n`);
+        
+        const { simd, architecture, purpose, prototypes = [], link_to_doc } = arch;
 
-        for (const proto of data.prototypes) {
-            const { key, inputs = [], output = '', asm, example } = proto;
+        const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
 
-            const inputList = inputs.join(', ');
-            const line = `${output} variable = ${key}(${inputList});`;
-            
-            // Signature
-            md.push(`<details>`);
-            md.push(`<summary><code>${line}</code></summary>\n`);
-            // md.push('```c\n' + line + '\n```');
-
-
-            // Always show example if present
-            // if (typeof example === 'string' && example.trim()) {
-            //     md.push('```c\n' + example.trim() + '\n```');
-            // }
-            if (typeof example === 'string' && example.trim()) {
-                md.push('\n```c\n' + example.trim() + '\n```');
-            }
-
-            md.push(`</details>`);
+        const titleLine = [`**${simd || ''}**`, architecture || ''].filter(Boolean).join(' - ');
+        md.appendMarkdown(`### [${data.name}](${simdLink})${titleLine ? ` (${titleLine})` : ''}\n`);
+        const plainPurpose = purpose?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+        if (plainPurpose) {
+          md.appendMarkdown(`${plainPurpose}\n`);
         }
-    }
 
+        if (prototypes.length) {
+          md.appendMarkdown(`\n**Prototypes:**\n`);
+          for (const proto of prototypes) {
+            const inputList = proto.inputs?.join(', ') || '';
+            const line = `${proto.output || 'void'} variable = ${proto.key}(${inputList});`;
+            md.appendMarkdown('```c\n' + line + '\n```\n');
+          }
+        }
+      }
+    } else {
+      const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
 
-    // Shared (non-IBM-Z) asm & example
-    if (!isVSX) {
-      if (typeof data.example === 'string' && data.example.trim()) {
-        md.push(`\n**Example:**\n`);
-        md.push('```c\n' + data.example.trim() + '\n```');
+         
+      const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');
+      md.appendMarkdown(`### [${data.name}](${simdLink})${simdInfo ? ` (${simdInfo})` : ''}\n`);
+      if (simdInfo) md.appendMarkdown(`(${simdInfo})\n`);
+
+      const purpose = data.purpose?.replace(/<\/?[^>]+(>|$)/g, '').trim();
+      if (purpose) md.appendMarkdown(`${purpose}\n`);
+
+      if (data.notes?.trim()) {
+        md.appendMarkdown(`**Notes:** ${data.notes.trim()}\n`);
+      }
+
+      if (Array.isArray(data.prototypes) && data.prototypes.length > 0) {
+        md.appendMarkdown(`\n**Prototypes:**\n`);
+        for (const proto of data.prototypes) {
+          const inputList = proto.inputs?.join(', ') || '';
+          const line = `${proto.output || 'void'} variable = ${proto.key}(${inputList});`;
+          md.appendMarkdown('```c\n' + line + '\n```\n');
+
+        }
       }
     }
 
-
-    const markdown = md.join('\n\n');
+    const markdown = md.value;
     tooltipCache[word] = markdown;
-    console.log(`Tooltip fetched for ${word}:`, markdown);
-    
     return markdown;
   } catch (error) {
     console.error('Failed to fetch tooltip for', word, error);
