@@ -8,3 +8,11 @@ export function getApiToken(): string | undefined {
   }
   return token;
 }
+
+import * as dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+export const API_KEY_VIEW_C_INTRINSIC = process.env.API_KEY_VIEW_C_INTRINSIC || '';
+export const API_KEY_INTRINSIC_NAMES = process.env.API_KEY_INTRINSIC_NAMES || '';

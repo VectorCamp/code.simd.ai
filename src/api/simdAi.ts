@@ -1,4 +1,7 @@
 import { getApiToken } from '../config';
+import { API_KEY_VIEW_C_INTRINSIC,API_KEY_INTRINSIC_NAMES } from '../config';
+
+
 
 export async function callSimdAiWithHistory(messages: { role: string; content: string }[]): Promise<string> {
   const apiToken = getApiToken();
@@ -40,7 +43,7 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   try {
     const response = await fetch('https://staging.simd.info:8192/api/intrinsic-names/', {
       headers: {
-        'X-API-Key': 'mermigkis'
+        'X-API-Key': API_KEY_INTRINSIC_NAMES
       }
     });
 
@@ -71,5 +74,48 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   } catch (err) {
     console.error('Error fetching intrinsic names:', err);
     return [];
+  }
+}
+
+interface Prototype {
+  key: string;
+  output?: string;
+  inputs?: string[];
+  asm?: string;
+  example?: string;
+}
+
+interface TooltipData {
+  name: string;
+  purpose: string;
+  result?: string;
+  simd?: string;
+  notes?: string;
+  engine?: string;
+  link_to_doc?: string;
+  asm?: string; 
+  prototypes?: Prototype[];
+  example?: string;    
+}
+
+export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | null> {
+  try {
+    const response = await fetch(`https://staging.simd.info:8192/api/c_intrinsic/${encodeURIComponent(word)}`, {
+      headers: {
+        'X-API-Key': API_KEY_VIEW_C_INTRINSIC
+      }
+    });
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch intrinsic for "${word}":`, response.statusText);
+      return null;
+    }
+
+    const data = (await response.json()) as TooltipData;
+    return data;
+
+  } catch (err) {
+    console.error(`Error fetching intrinsic for "${word}":`, err);
+    return null;
   }
 }
