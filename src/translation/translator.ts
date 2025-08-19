@@ -32,6 +32,7 @@ export function registerTranslateCommand(fromArch: string, toArch: string, comma
 
     const selectedText = editor.document.getText(selection);
     translationState.originalText = selectedText;
+    translationState.originalRange = selection;
 
     const userPrompt = `I have a function written using ${fromArch} intrinsics and I want to translate it to ${toArch}. Can you help?
 If there is no direct equivalent intrinsic in the target architecture, try to replicate the behavior using multiple intrinsics instead of just one.
@@ -68,7 +69,7 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
 
       translationState.pendingText = translated;
       const cleanTranslation = translated.replace(/```[a-z]*\n?/g, '').replace(/```/g, '').trim();
-      const formattedBlock = `\n// Original ${fromArch}:\n${translationState.originalText}\n\n// Translated ${toArch}:\n${cleanTranslation}\n`;
+      const formattedBlock = `\n${cleanTranslation}\n`;
 
       const insertPosition = new vscode.Position(selection.end.line + 1, 0);
       await editor.edit(editBuilder => {
@@ -76,9 +77,10 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
       });
 
       const translatedStart = insertPosition;
+      const lines = formattedBlock.split("\n");
       const translatedEnd = new vscode.Position(
-        insertPosition.line + formattedBlock.split('\n').length,
-        0
+          insertPosition.line + lines.length - 1,
+          lines[lines.length - 1].length
       );
       translationState.pendingRange = new vscode.Range(translatedStart, translatedEnd);
 

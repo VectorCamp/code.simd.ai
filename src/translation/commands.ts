@@ -7,7 +7,7 @@ export function registerAcceptRejectCommands(context: vscode.ExtensionContext) {
 
         const acceptCmd = vscode.commands.registerCommand('code.simd.ai.acceptTranslation', async () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor || !translationState.pendingRange || !translationState.pendingText || !translationState.originalText) {return;}
+            if (!editor || !translationState.pendingRange || !translationState.originalRange || !translationState.pendingText || !translationState.originalText) {return;}
     
             const startLine = Math.max(0, translationState.pendingRange.start.line - translationState.originalText.split('\n').length - 2);
             const fullRange = new vscode.Range(
@@ -17,7 +17,10 @@ export function registerAcceptRejectCommands(context: vscode.ExtensionContext) {
     
     
             await editor.edit(editBuilder => {
-                editBuilder.replace(fullRange, translationState.pendingText!);
+                editBuilder.replace(translationState.originalRange!, translationState.pendingText!);
+
+                // Remove the preview block that was inserted below
+                editBuilder.delete(translationState.pendingRange!);
             });
     
             if (translationState.pendingDecoration) {

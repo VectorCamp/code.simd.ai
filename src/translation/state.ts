@@ -5,10 +5,12 @@ export const translationState = {
   pendingRange: null as vscode.Range | null,
   pendingText: null as string | null,
   originalText: null as string | null,
+  originalRange: null as vscode.Range | null,
 };
 
 export function clearState() {
   translationState.pendingRange = null;
   translationState.pendingText = null;
   translationState.originalText = null;
+  translationState.originalRange = null;
 }
