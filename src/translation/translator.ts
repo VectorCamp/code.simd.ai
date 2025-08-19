@@ -2,7 +2,18 @@ import * as vscode from 'vscode';
 import { translationState, clearState } from './state';
 import { getApiToken } from '../config';
 
+interface ChatMessage {
+  role: string;
+  content: string;
+}
 
+interface ChatChoice {
+  message?: ChatMessage;
+}
+
+interface ChatResponse {
+  choices?: ChatChoice[];
+}
 
 
 export function registerTranslateCommand(fromArch: string, toArch: string, commandName: string) {
@@ -51,7 +62,8 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
         return;
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as ChatResponse;
+
       const translated = data.choices?.[0]?.message?.content ?? '// No translation received';
 
       translationState.pendingText = translated;
