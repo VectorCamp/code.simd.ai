@@ -65,12 +65,14 @@ This extension contributes the following settings:
 
 ## Release Notes
 
-### 1.0.0
+### 0.0.1
 - Initial release of **code.simd.ai** with AI-assisted SIMD code porting for SSE4.2, NEON, and VSX.
-
-### 1.1.0
 - Added AI chat sessions for code guidance  
-- Introduced premium architecture support  
+
+
+### 0.0.2
+- Fixes on Hover Tooltip
+
 
 ---
 
