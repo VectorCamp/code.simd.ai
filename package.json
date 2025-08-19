@@ -1,5 +1,5 @@
 {
-  "name": "code.simd.ai",
+  "name": "code-simd-ai",
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
   "version": "0.0.1",
@@ -204,6 +204,9 @@
     "node-fetch": "^2.7.0"
   },
   "files": [
-    "resources"
+    "dist",
+    "media",
+    "README.md",
+    ".env"
   ]
 }
