@@ -3,8 +3,9 @@
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
   "version": "0.0.1",
+  "publisher": "vectorcamppc",
   "engines": {
-    "vscode": "^1.102.0"
+    "vscode": "^1.100.0"
   },
   "categories": [
     "Other"
@@ -188,7 +189,7 @@
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@types/node-fetch": "^2.6.13",
-    "@types/vscode": "^1.102.0",
+    "@types/vscode": "^1.100.0",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
     "@typescript-eslint/parser": "^8.3.0",
     "@vscode/test-cli": "^0.0.10",
