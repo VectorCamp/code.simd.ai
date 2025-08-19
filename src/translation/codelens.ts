@@ -4,7 +4,7 @@ import { translationState, clearState } from './state';
 
 export class TranslationCodeLensProvider implements vscode.CodeLensProvider {
   provideCodeLenses(): vscode.CodeLens[] {
-    if (!translationState.pendingRange || !translationState.pendingText) return [];
+    if (!translationState.pendingRange || !translationState.pendingText) {return [];}
 
     const lensLine = translationState.pendingRange.start.line;
     const range = new vscode.Range(lensLine, 0, lensLine, 0);

@@ -5,7 +5,7 @@ import { API_KEY_VIEW_C_INTRINSIC,API_KEY_INTRINSIC_NAMES } from '../config';
 
 export async function callSimdAiWithHistory(messages: { role: string; content: string }[]): Promise<string> {
   const apiToken = getApiToken();
-  if (!apiToken) return '⚠️ API token missing';
+  if (!apiToken) {return '⚠️ API token missing';}
 
   try {
     const res = await fetch('https://simd.ai/api/chat/completions', {
@@ -38,7 +38,7 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
 let cachedIntrinsics: string[] | null = null;
 
 export async function fetchIntrinsicNames(): Promise<string[]> {
-  if (cachedIntrinsics) return cachedIntrinsics; // return from cache if available
+  if (cachedIntrinsics) {return cachedIntrinsics;} // return from cache if available
 
   try {
     const response = await fetch('https://staging.simd.info:8192/api/intrinsic-names/', {

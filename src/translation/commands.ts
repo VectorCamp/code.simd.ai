@@ -7,7 +7,7 @@ export function registerAcceptRejectCommands(context: vscode.ExtensionContext) {
 
         const acceptCmd = vscode.commands.registerCommand('code.simd.ai.acceptTranslation', async () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor || !translationState.pendingRange || !translationState.pendingText || !translationState.originalText) return;
+            if (!editor || !translationState.pendingRange || !translationState.pendingText || !translationState.originalText) {return;}
     
             const startLine = Math.max(0, translationState.pendingRange.start.line - translationState.originalText.split('\n').length - 2);
             const fullRange = new vscode.Range(
@@ -31,7 +31,7 @@ export function registerAcceptRejectCommands(context: vscode.ExtensionContext) {
     
         const rejectCmd = vscode.commands.registerCommand('code.simd.ai.rejectTranslation', async () => {
             const editor = vscode.window.activeTextEditor;
-            if (!editor || !translationState.pendingRange) return;
+            if (!editor || !translationState.pendingRange) {return;}
     
             await editor.edit(editBuilder => {
                 editBuilder.delete(translationState.pendingRange!);
@@ -52,7 +52,7 @@ export function registerAcceptRejectCommands(context: vscode.ExtensionContext) {
 export function registerEditSIMDCommand(context: vscode.ExtensionContext, provider: ChatViewProvider) {
 	const editCmd = vscode.commands.registerCommand('code.simd.ai.editSIMD', () => {
 		const editor = vscode.window.activeTextEditor;
-		if (!editor) return;
+		if (!editor) {return;}
 
 		const selection = editor.document.getText(editor.selection);
 		provider.postMessageToChat(selection); // Send selected SIMD code to the chat webview

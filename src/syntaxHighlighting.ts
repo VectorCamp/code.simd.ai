@@ -23,7 +23,7 @@ export async function initIntrinsicHighlighting(context: vscode.ExtensionContext
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (editor) highlightIntrinsics(editor);
+      if (editor) {highlightIntrinsics(editor);}
     }),
 
     vscode.workspace.onDidChangeTextDocument(event => {
@@ -47,7 +47,7 @@ async function highlightIntrinsics(editor: vscode.TextEditor) {
   }
 
   // Dispose old decoration
-  if (decorationType) decorationType.dispose();
+  if (decorationType) {decorationType.dispose();}
 
   decorationType = vscode.window.createTextEditorDecorationType({
     backgroundColor: 'transparent',

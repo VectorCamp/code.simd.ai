@@ -58,15 +58,9 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           this.currentSessionId = message.sessionId;
           webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
           break;
-        // case 'requestSessionList':
-        //   const allSessions = getAllSessions(this.context);
-        //   const sessionIds = Object.keys(allSessions);
-        //   webview.postMessage({ type: 'sessionList', sessions: sessionIds, currentSession: this.currentSessionId });
-        //   break;
         case 'deleteSession':
             await clearChatHistory(this.context, message.sessionId);
             break;
-
         case 'requestSessionList':
             const sessions = Object.keys(getAllSessions(this.context));
             webview.postMessage({
@@ -82,7 +76,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
   private async handleUserMessage(userText: string) {
     const webview = this._view?.webview;
-    if (!webview) return;
+    if (!webview) {return;}
 
     const rawHistory = getChatHistory(this.context, this.currentSessionId);
     const contextMessages = extractMessages(rawHistory);

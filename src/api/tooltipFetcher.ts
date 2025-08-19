@@ -13,7 +13,7 @@ const tooltipCache: Record<string, string> = {};
 
 
 export async function fetchTooltip(word: string): Promise<string> {
-  if (tooltipCache[word]) return tooltipCache[word];
+  if (tooltipCache[word]) {return tooltipCache[word];}
 
   try {
     const data = await fetchIntrinsicInfo(word);
@@ -58,10 +58,10 @@ export async function fetchTooltip(word: string): Promise<string> {
          
       const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');
       md.appendMarkdown(`### [${data.name}](${simdLink})${simdInfo ? ` (${simdInfo})` : ''}\n`);
-      if (simdInfo) md.appendMarkdown(`(${simdInfo})\n`);
+      if (simdInfo) {md.appendMarkdown(`(${simdInfo})\n`);}
 
       const purpose = data.purpose?.replace(/<\/?[^>]+(>|$)/g, '').trim();
-      if (purpose) md.appendMarkdown(`${purpose}\n`);
+      if (purpose) {md.appendMarkdown(`${purpose}\n`);}
 
       if (data.notes?.trim()) {
         md.appendMarkdown(`**Notes:** ${data.notes.trim()}\n`);
