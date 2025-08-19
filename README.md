@@ -1,71 +1,86 @@
 # code.simd.ai README
 
-This is the README for your extension "code.simd.ai". After writing up a brief description, we recommend including the following sections.
+Supercharge SIMD development directly in VS Code with AI-assisted code translation and optimization across multiple SIMD architectures.
 
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+AI-powered translation makes porting your code between SSE4.2, NEON, VSX, and more effortless. Enjoy smart intrinsics highlighting, instant conversions, and seamless workflow integration.
 
 ---
 
-## Following extension guidelines
+## Features
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+- **AI-assisted SIMD Code Porting**  
+  Automatically translate SIMD code across architectures like SSE4.2, NEON, and VSX in real-time.  
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+  ```c
+  // Original SSE4.2 Code
+  __m128i a = _mm_loadu_si128(ptr_a);
+  __m128i b = _mm_loadu_si128(ptr_b);
+  __m128i result = _mm_add_epi32(a, b);
 
-## Working with Markdown
+  // Converted to NEON
+  int32x4_t a = vld1q_s32(ptr_a);
+  int32x4_t b = vld1q_s32(ptr_b);
+  int32x4_t result = vaddq_s32(a, b);
+  ```
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+- **Smart Intrinsics Highlighting**  
+  Easily read and navigate SIMD intrinsics with syntax highlighting tailored to each architecture.
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- **AI Chat Sessions**  
+  Engage with a specialized SIMD AI for explanations, optimizations, and architecture-specific guidance. Maintain multiple chat sessions across projects.  
 
-## For more information
+- **Free & Premium Architectures**  
+  - Free: SSE4.2, NEON, VSX  
+  - Premium (requires SIMD.ai paid plan): AVX512, IBM-Z, RVV 1.0, LSX/LASX, MIPS/MSA, SVE, SVE2  
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+- **Lightning Fast Porting**  
+  Optimize and port your SIMD code in seconds, saving hours of manual work.
+
+- **Better Results**  
+  Based on SIMD.info data for higher accuracy than generic LLMs, including ChatGPT or Claude.
+
+---
+
+## Requirements
+
+- Visual Studio Code (latest stable version recommended)
+- Internet connection for AI translation and chat features
+- Optional: SIMD.ai account for premium architectures and AI translation
+
+---
+
+## Extension Settings
+
+This extension contributes the following settings:
+
+* `code.simd.ai.apiToken`: Your SIMD AI API token. Get it from [https://simd.ai/](https://simd.ai/).
+
+---
+
+## Known Issues
+
+- Some architectures (e.g., RVV 1.0, LSX/LASX) are still in development.  
+
+---
+
+## Release Notes
+
+### 1.0.0
+- Initial release of **code.simd.ai** with AI-assisted SIMD code porting for SSE4.2, NEON, and VSX.
+
+### 1.1.0
+- Added AI chat sessions for code guidance  
+- Introduced premium architecture support  
+
+---
+
+
+
+## For More Information
+
+* [VS Code Markdown Support](http://code.visualstudio.com/docs/languages/markdown)  
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**
+---
+
+**Enjoy SIMD coding made easy! �**
