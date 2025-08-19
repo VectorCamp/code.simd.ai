@@ -41,7 +41,7 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   if (cachedIntrinsics) {return cachedIntrinsics;} // return from cache if available
 
   try {
-    const response = await fetch('https://simd.info/api/intrinsic-names/', {
+    const response = await fetch('https://staging.simd.info:8192/api/intrinsic-names/', {
       headers: {
         'X-API-Key': API_KEY_INTRINSIC_NAMES
       }
@@ -108,7 +108,7 @@ interface Architecture {
 
 export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | null> {
   try {
-    const response = await fetch(`https://simd.info/api/c_intrinsic/${encodeURIComponent(word)}`, {
+    const response = await fetch(`https://staging.simd.info:8192/api/c_intrinsic/${encodeURIComponent(word)}`, {
       headers: {
         'X-API-Key': API_KEY_VIEW_C_INTRINSIC
       }
