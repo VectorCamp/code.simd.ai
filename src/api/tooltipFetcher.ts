@@ -47,7 +47,7 @@ export async function fetchTooltip(word: string): Promise<string> {
           md.appendMarkdown(`\n**Prototypes:**\n`);
           for (const proto of prototypes) {
             const inputList = proto.inputs?.join(', ') || '';
-            const line = `${proto.output || 'void'} variable = ${proto.key}(${inputList});`;
+            const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
             md.appendMarkdown('```c\n' + line + '\n```\n');
           }
         }
@@ -71,7 +71,7 @@ export async function fetchTooltip(word: string): Promise<string> {
         md.appendMarkdown(`\n**Prototypes:**\n`);
         for (const proto of data.prototypes) {
           const inputList = proto.inputs?.join(', ') || '';
-          const line = `${proto.output || 'void'} variable = ${proto.key}(${inputList});`;
+          const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
           md.appendMarkdown('```c\n' + line + '\n```\n');
 
         }
