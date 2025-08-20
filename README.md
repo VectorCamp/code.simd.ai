@@ -76,13 +76,4 @@ This extension contributes the following settings:
 
 ---
 
-
-
-## For More Information
-
-* [VS Code Markdown Support](http://code.visualstudio.com/docs/languages/markdown)  
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
----
-
 **Enjoy SIMD coding made easy! �**
