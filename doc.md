@@ -37,24 +37,23 @@ press f5 inside extension.ts to run local dev based on the npm run build
 - TODO: Add a proper license file to the repository/package.
 
 ## Project Structure
+- **extension.ts**  
+  Entry point of the extension. Responsible for activation and registering all commands.
 
-- extension.ts
-    - Acts as the main entry point, responsible for activating all commands.
+- **syntaxHighlighting.ts**  
+  Contains logic for syntax highlighting of intrinsics and hover tooltips.
 
-- syntaxHighlighting.ts
-    - Contains the logic for intrinsics highlighting and tooltip hovers.
+- **config.ts**  
+  Handles configuration and API key management.
 
-- config.ts
-    - Handles logic related to API keys.
+- **ChatViewProvider.ts**, **ChatWebviewHtml.ts**, **media/chat.html**  
+  Implements the sidebar chat view, including its UI and communication logic.
 
-- ChatViewProvider.ts, ChatWebviewHtml.ts, and media/chat.html
-    - Together provide the sidebar chat functionality.
+- **utils/**  
+  Utility functions used for managing chat sessions and message history.
 
-- utils/
-    - Utility functions to support chat sessions and message history.
+- **translation/**  
+  Contains logic for the translation commands across different architectures.
 
-- translation/
-    - Implements the translation command logic for various architectures.
-
-- api/
-    - implements various fetches
+- ** api/** 
+  Implements various fetches
