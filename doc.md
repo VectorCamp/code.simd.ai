@@ -23,6 +23,9 @@ After packaging, install the extension locally:
     code install-extension your-package-name.vsix
 ```
 
+or after the git clone
+press f5 inside extension.ts to run local dev based on the npm run build
+
 ## Endpoints
 - TODO: Replace temporary endpoints with simd.ai endpoints.
 
