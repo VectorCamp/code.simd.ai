@@ -55,5 +55,5 @@ press f5 inside extension.ts to run local dev based on the npm run build
 - **translation/**  
   Contains logic for the translation commands across different architectures.
 
-- ** api/** 
+- **api/** 
   Implements various fetches
