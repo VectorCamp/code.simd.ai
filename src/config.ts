@@ -14,5 +14,4 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-export const API_KEY_VIEW_C_INTRINSIC = process.env.API_KEY_VIEW_C_INTRINSIC || '';
-export const API_KEY_INTRINSIC_NAMES = process.env.API_KEY_INTRINSIC_NAMES || '';
+export const PLUGIN_DEFAULT_TOKEN = "sk-e1af5d37498c4fa0823fabda7c5c8c31";
