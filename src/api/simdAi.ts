@@ -8,7 +8,7 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
   if (!apiToken) {return '⚠️ API token missing';}
 
   try {
-    const res = await fetch('https://simd.ai/api/chat/completions', {
+    const res = await fetch('https://staging.simd.ai/api/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
