@@ -6,7 +6,7 @@ import { fetchIntrinsicInfo } from './simdAi';
 
 
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
 
 const tooltipCache: Record<string, string> = {};
 
@@ -54,8 +54,8 @@ export async function fetchTooltip(word: string): Promise<string> {
       }
     } else {
       const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
-
-         
+      
+      
       const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');
       md.appendMarkdown(`### [${data.name}](${simdLink})${simdInfo ? ` (${simdInfo})` : ''}\n`);
       if (simdInfo) {md.appendMarkdown(`(${simdInfo})\n`);}
@@ -73,7 +73,7 @@ export async function fetchTooltip(word: string): Promise<string> {
           const inputList = proto.inputs?.join(', ') || '';
           const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
           md.appendMarkdown('```c\n' + line + '\n```\n');
-
+      
         }
       }
     }
