@@ -7,14 +7,6 @@ let decorationType: vscode.TextEditorDecorationType | null = null;
 let intrinsics: string[] = [];
 
 export async function initIntrinsicHighlighting(context: vscode.ExtensionContext) {
-  // try {
-  //   const intrinsicsPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'intrinsics.txt').fsPath;
-  //   const content = fs.readFileSync(intrinsicsPath, 'utf8');
-  //   intrinsics = content.split(/\r?\n/).filter(Boolean);
-  // } catch (error) {
-  //   console.error('Failed to load intrinsics:', error);
-  // }
-
   try {
     intrinsics = await fetchIntrinsicNames();
   } catch (error) {
