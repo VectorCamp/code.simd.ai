@@ -10,6 +10,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/splash-dark.png",
   "license": "Apache-2.0",
   "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
