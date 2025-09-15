@@ -2,14 +2,15 @@
   "name": "code-simd-ai",
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
-  "version": "0.0.3",
-  "publisher": "vectorcamppc",
+  "version": "0.0.4",
+  "publisher": "VectorcampPc",
   "engines": {
     "vscode": "^1.100.0"
   },
   "categories": [
     "Other"
   ],
+  "license": "Apache-2.0",
   "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
@@ -207,6 +208,7 @@
   "files": [
     "dist",
     "media",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ]
 }
