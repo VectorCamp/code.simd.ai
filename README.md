@@ -1,8 +1,8 @@
 # code.simd.ai README
 
-Supercharge SIMD development directly in VS Code with AI-assisted code translation and optimization across multiple SIMD architectures.
+Supercharge SIMD development directly in VS Code.
 
-AI-powered translation makes porting your code between SSE4.2, NEON, VSX, and more effortless. Enjoy smart intrinsics highlighting, instant conversions, and seamless workflow integration.
+AI-assisted SIMD code porting across SSE4.2, AVX, NEON, VSX, and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
 
 ---
 
@@ -26,15 +26,31 @@ AI-powered translation makes porting your code between SSE4.2, NEON, VSX, and mo
 - **Smart Intrinsics Highlighting**  
   Easily read and navigate SIMD intrinsics with syntax highlighting tailored to each architecture.
 
+<video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/highlighting_2.mp4">
+    <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 - **AI Chat Sessions**  
   Engage with a specialized SIMD AI for explanations, optimizations, and architecture-specific guidance. Maintain multiple chat sessions across projects.  
+
+<video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/ai_chat.mp4">
+    <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 
 - **Free & Premium Architectures**  
   - Free: SSE4.2, NEON, VSX  
   - Premium (requires SIMD.ai paid plan): AVX512, IBM-Z, RVV 1.0, LSX/LASX, MIPS/MSA, SVE, SVE2  
 
 - **Lightning Fast Porting**  
-  Optimize and port your SIMD code in seconds, saving hours of manual work.
+  Port your SIMD code in seconds, saving hours of manual work.
+
+<video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/full_translation.mp4">
+    <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 
 - **Better Results**  
   Based on SIMD.info data for higher accuracy than generic LLMs, including ChatGPT or Claude.
@@ -57,7 +73,7 @@ This extension contributes the following settings:
 
 ---
 
-## Known Issues
+## Coming soon
 
 - Some architectures (e.g., RVV 1.0, LSX/LASX) are still in development.  
 
