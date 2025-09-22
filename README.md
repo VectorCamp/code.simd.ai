@@ -2,26 +2,22 @@
 
 Supercharge SIMD development directly in VS Code.
 
-AI-assisted SIMD code porting across SSE4.2, AVX, NEON, VSX, and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
+AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX, and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
 
----
+## Example 1 – VSX
+![VSX Example](media/power_vsx_example.png)
+
+## Example 2 – NEON
+![NEON Example](media/arm_neon_example.png)
+
+## Example 3 – SSE
+![SSE Example](media/intel_sse_example.png)
+
 
 ## Features
-
 - **AI-assisted SIMD Code Porting**  
-  Automatically translate SIMD code across architectures like SSE4.2, NEON, and VSX in real-time.  
+  Automatically translate SIMD code across architectures like Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSXin real-time.  
 
-  ```c
-  // Original SSE4.2 Code
-  __m128i a = _mm_loadu_si128(ptr_a);
-  __m128i b = _mm_loadu_si128(ptr_b);
-  __m128i result = _mm_add_epi32(a, b);
-
-  // Converted to NEON
-  int32x4_t a = vld1q_s32(ptr_a);
-  int32x4_t b = vld1q_s32(ptr_b);
-  int32x4_t result = vaddq_s32(a, b);
-  ```
 
 - **Smart Intrinsics Highlighting**  
   Easily read and navigate SIMD intrinsics with syntax highlighting tailored to each architecture.
@@ -32,7 +28,7 @@ AI-assisted SIMD code porting across SSE4.2, AVX, NEON, VSX, and more—right in
 </video>
 
 - **AI Chat Sessions**  
-  Engage with a specialized SIMD AI for explanations, optimizations, and architecture-specific guidance. Maintain multiple chat sessions across projects.  
+  Engage with a specialized SIMD AI for explanations, translations, and architecture-specific guidance. Maintain multiple chat sessions across projects.
 
 <video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/ai_chat.mp4">
     <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
@@ -40,11 +36,11 @@ AI-assisted SIMD code porting across SSE4.2, AVX, NEON, VSX, and more—right in
 </video>
 
 - **Free & Premium Architectures**  
-  - Free: SSE4.2, NEON, VSX  
-  - Premium (requires SIMD.ai paid plan): AVX512, IBM-Z, RVV 1.0, LSX/LASX, MIPS/MSA, SVE, SVE2  
+  - Free: Intel SSE4.2 and AVX2) and Arm NEON and Power VSX with brief coverage (~5%)
+  - Premium (requires SIMD.ai paid plan): Intel AVX512, Arm NEON, Power VSX
 
-- **Lightning Fast Porting**  
-  Port your SIMD code in seconds, saving hours of manual work.
+- **Lightning Fast Porting**
+  Translate your SIMD code in seconds, saving hours of manual work.
 
 <video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/full_translation.mp4">
     <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
@@ -61,7 +57,7 @@ AI-assisted SIMD code porting across SSE4.2, AVX, NEON, VSX, and more—right in
 
 - Visual Studio Code (latest stable version recommended)
 - Internet connection for AI translation and chat features
-- Optional: SIMD.ai account for premium architectures and AI translation
+- SIMD.ai account for premium architectures and AI translation
 
 ---
 
@@ -74,8 +70,7 @@ This extension contributes the following settings:
 ---
 
 ## Coming soon
-
-- Some architectures (e.g., RVV 1.0, LSX/LASX) are still in development.  
+- Some architectures (e.g. Power IBM-Z, RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel MMX ARM SME, ARM SVE/SVE2  ) are still in development.  
 
 ---
 
@@ -89,7 +84,8 @@ This extension contributes the following settings:
 ### 0.0.2
 - Fixes on Hover Tooltip
 
-
+### 0.9
+- Copyright Vectorcamp 2025
 ---
 
 **Enjoy SIMD coding made easy! �**
