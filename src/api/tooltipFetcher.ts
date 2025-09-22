@@ -34,7 +34,7 @@ export async function fetchTooltip(word: string): Promise<string> {
         
         const { simd, architecture, purpose, prototypes = [], link_to_doc } = arch;
 
-        const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
+        const simdLink = `https://simd.info/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
 
         const titleLine = [`**${simd || ''}**`, architecture || ''].filter(Boolean).join(' - ');
         md.appendMarkdown(`### [${data.name}](${simdLink})${titleLine ? ` (${titleLine})` : ''}\n`);
@@ -53,7 +53,7 @@ export async function fetchTooltip(word: string): Promise<string> {
         }
       }
     } else {
-      const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
+      const simdLink = `https://simd.info/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
       
       
       const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');

@@ -14,4 +14,4 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-export const PLUGIN_DEFAULT_TOKEN = "sk-e1af5d37498c4fa0823fabda7c5c8c31";
+export const PLUGIN_DEFAULT_TOKEN = "sk-b5204816b07e49ec8096c9e8b34f28bb";
