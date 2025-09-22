@@ -497,7 +497,7 @@
         const message = event.data;
         if (message.type === 'history') {
             clearChat(); 
-            renderHistory(message.messages); // your render function
+            renderHistory(message.messages);
         } else if (message.type === 'response') {
             removeSpinner();
             const botName = 'SIMD.ai';
@@ -620,7 +620,6 @@
             defaultTab.dataset.id = 'Chat 1';
             defaultTab.textContent = 'Chat 1';
 
-            // Prevent duplicates
             const alreadyExists = [...sessionTabsContainer.children].some(tab => tab.dataset.id === sessionId);
             if (alreadyExists) {
                 showError('Session name already exists.');
@@ -630,7 +629,7 @@
             }
             createSessionTab(sessionId, true);
             vscode.postMessage({ type: 'switchSession', sessionId });
-            // Cleanup modal
+            
             document.getElementById('sessionModal').style.display = 'none';
             document.getElementById('sessionName').value = '';
         }
