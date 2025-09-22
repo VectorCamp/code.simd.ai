@@ -7,11 +7,7 @@
 - After updating, run the packaging command:
   ```bash
   npm run build
-  vsce package --allow-package-env-file
-
-
-We currently use .env for simd.info endpoints, so the --allow-package-env-file flag is required.
-(when we publish it will be more straight forward)
+  vsce package
 
 Upload the new package.
 
@@ -27,14 +23,12 @@ or after the git clone
 press f5 inside extension.ts to run local dev based on the npm run build
 
 ## Endpoints
-- TODO: Replace temporary endpoints with simd.ai endpoints.
-
 - When updating endpoints, modify:
     - simdAi.ts
     - config.ts
 
 ## License
-- TODO: Add a proper license file to the repository/package.
+- Apache 2.0
 
 ## Project Structure
 - **extension.ts**  
