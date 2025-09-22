@@ -77,15 +77,20 @@ This extension contributes the following settings:
 ## Release Notes
 
 ### 0.0.1
-- Initial release of **code.simd.ai** with AI-assisted SIMD code porting for SSE4.2, NEON, and VSX.
-- Added AI chat sessions for code guidance  
+- Initial release of **code.simd.ai**.
+- Added AI chat sessions for code guidance.
 
 
 ### 0.0.2
 - Fixes on Hover Tooltip
 
-### 0.9
-- Copyright Vectorcamp 2025
+### 1.0.0
+- Preview changes,Api endpoint changes,Official Release
 ---
 
-**Enjoy SIMD coding made easy! �**
+
+## Support at
+- Contact us at code.simd.ai@vectorcamp.gr
+
+
+**Enjoy SIMD coding made easy!**
