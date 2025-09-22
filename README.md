@@ -89,7 +89,7 @@ This extension contributes the following settings:
 ---
 
 
-## Support at
+## Support email
 - Contact us at code.simd.ai@vectorcamp.gr
 
 
