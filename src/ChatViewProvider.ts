@@ -43,21 +43,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     webview.options = { enableScripts: true };
     webview.html = getChatWebviewHtml(this.context, webview);
 
-    // webview.onDidReceiveMessage(async message => {
-    //   switch (message.type) {
-    //     case 'send':
-    //       await this.handleUserMessage(message.text);
-    //       break;
-    //     case 'requestHistory':
-    //       webview.postMessage({ type: 'history', messages: getChatHistory(this.context) });
-    //       break;
-    //     case 'clearHistory':
-    //       await clearChatHistory(this.context);
-    //       webview.postMessage({ type: 'history', messages: [] });
-    //       break;
-    //   }
-    // });
-  // }
     webview.onDidReceiveMessage(async message => {
       switch (message.type) {
         case 'send':

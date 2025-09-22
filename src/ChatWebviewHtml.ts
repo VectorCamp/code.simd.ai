@@ -30,7 +30,6 @@ export function getChatWebviewHtml(context: vscode.ExtensionContext, webview: vs
     vscode.Uri.joinPath(context.extensionUri, 'media', 'marked.js')
   );
 
-  // Replace placeholder tokens in HTML with actual webview URIs
   html = html
     .replace(/\${botLogoUri}/g, botLogoUri.toString())
     .replace(/\${markedUri}/g, markedUri.toString());
