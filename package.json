@@ -52,10 +52,6 @@
     },
     "commands": [
       {
-        "command": "code.simd.ai.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "code.simd.ai.translateSSEToNeon",
         "title": "Arm NEON"
       },

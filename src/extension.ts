@@ -27,7 +27,7 @@ import { initIntrinsicHighlighting, deactivateHighlighting } from './syntaxHighl
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('Congratulations, your extension "code.simd.ai" is now active!');
+	console.log('Congratulations, Extension "code.simd.ai" is now active!');
 	const provider = new ChatViewProvider(context);
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider('code.simd.ai.chatView', provider)
