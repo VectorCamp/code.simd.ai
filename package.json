@@ -3,7 +3,7 @@
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
   "version": "1.0.0",
-  "publisher": "VectorcampPc",
+  "publisher": "VectorCamp",
   "engines": {
     "vscode": "^1.100.0"
   },
