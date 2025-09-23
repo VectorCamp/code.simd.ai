@@ -95,7 +95,7 @@ We are actively working to address these issues in an upcoming release.
 ### 1.0.0
 - Preview changes,Api endpoint changes,Official Release
 
-## 1.0.1
+## 1.0.2
 - Fixed some typos in Details
 ---
 
