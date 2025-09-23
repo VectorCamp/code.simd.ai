@@ -1,3 +1,19 @@
+/*
+* Copyright (c) 2025, VectorCamp PC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 import fetch from 'node-fetch';
 (globalThis as any).fetch = fetch;
 
@@ -6,7 +22,7 @@ import { fetchIntrinsicInfo } from './simdAi';
 
 
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
 
 const tooltipCache: Record<string, string> = {};
 
@@ -34,7 +50,7 @@ export async function fetchTooltip(word: string): Promise<string> {
         
         const { simd, architecture, purpose, prototypes = [], link_to_doc } = arch;
 
-        const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
+        const simdLink = `https://simd.info/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
 
         const titleLine = [`**${simd || ''}**`, architecture || ''].filter(Boolean).join(' - ');
         md.appendMarkdown(`### [${data.name}](${simdLink})${titleLine ? ` (${titleLine})` : ''}\n`);
@@ -53,9 +69,9 @@ export async function fetchTooltip(word: string): Promise<string> {
         }
       }
     } else {
-      const simdLink = `https://staging.simd.info:8192/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
-
-         
+      const simdLink = `https://simd.info/c_intrinsic/${encodeURIComponent(data.name)}?engine=${data.engine || ''}`;
+      
+      
       const simdInfo = [data.simd, data.engine].filter(Boolean).join(' : ');
       md.appendMarkdown(`### [${data.name}](${simdLink})${simdInfo ? ` (${simdInfo})` : ''}\n`);
       if (simdInfo) {md.appendMarkdown(`(${simdInfo})\n`);}
@@ -73,7 +89,7 @@ export async function fetchTooltip(word: string): Promise<string> {
           const inputList = proto.inputs?.join(', ') || '';
           const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
           md.appendMarkdown('```c\n' + line + '\n```\n');
-
+      
         }
       }
     }

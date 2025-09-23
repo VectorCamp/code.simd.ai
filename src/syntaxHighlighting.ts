@@ -1,3 +1,18 @@
+/*
+* Copyright (c) 2025, VectorCamp PC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { fetchTooltip } from './api/tooltipFetcher';
@@ -7,14 +22,6 @@ let decorationType: vscode.TextEditorDecorationType | null = null;
 let intrinsics: string[] = [];
 
 export async function initIntrinsicHighlighting(context: vscode.ExtensionContext) {
-  // try {
-  //   const intrinsicsPath = vscode.Uri.joinPath(context.extensionUri, 'resources', 'intrinsics.txt').fsPath;
-  //   const content = fs.readFileSync(intrinsicsPath, 'utf8');
-  //   intrinsics = content.split(/\r?\n/).filter(Boolean);
-  // } catch (error) {
-  //   console.error('Failed to load intrinsics:', error);
-  // }
-
   try {
     intrinsics = await fetchIntrinsicNames();
   } catch (error) {

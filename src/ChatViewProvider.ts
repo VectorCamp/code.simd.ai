@@ -1,3 +1,19 @@
+/*
+* Copyright (c) 2025, VectorCamp PC
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 import * as vscode from 'vscode';
 import { getChatWebviewHtml } from './ChatWebviewHtml';
 import { getChatHistory, saveChatHistory, clearChatHistory, getAllSessions } from './utils/history';
@@ -27,21 +43,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     webview.options = { enableScripts: true };
     webview.html = getChatWebviewHtml(this.context, webview);
 
-    // webview.onDidReceiveMessage(async message => {
-    //   switch (message.type) {
-    //     case 'send':
-    //       await this.handleUserMessage(message.text);
-    //       break;
-    //     case 'requestHistory':
-    //       webview.postMessage({ type: 'history', messages: getChatHistory(this.context) });
-    //       break;
-    //     case 'clearHistory':
-    //       await clearChatHistory(this.context);
-    //       webview.postMessage({ type: 'history', messages: [] });
-    //       break;
-    //   }
-    // });
-  // }
     webview.onDidReceiveMessage(async message => {
       switch (message.type) {
         case 'send':
