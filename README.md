@@ -1,6 +1,6 @@
 # code.simd.ai README
 
-Supercharge SIMD development directly in VS Code.
+Supercharge SIMD development directly in your IDE.
 
 AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX, and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
 
@@ -16,7 +16,7 @@ AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power V
 
 ## Features
 - **AI-assisted SIMD Code Porting**  
-  Automatically translate SIMD code across architectures like Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSXin real-time.  
+  Automatically translate SIMD code across architectures like Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX in real-time.  
 
 
 - **Smart Intrinsics Highlighting**  
@@ -78,7 +78,7 @@ We are actively working to address these issues in an upcoming release.
 ---
 
 ## Coming soon
-- Some architectures (e.g. Power IBM-Z, RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel MMX ARM SME, ARM SVE/SVE2  ) are still in development.  
+- Some architectures (e.g. Power IBM-Z, RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel AMX, ARM SME2, ARM SVE/SVE2  ) are still in development.  
 
 ---
 
@@ -94,6 +94,9 @@ We are actively working to address these issues in an upcoming release.
 
 ### 1.0.0
 - Preview changes,Api endpoint changes,Official Release
+
+## 1.0.2
+- Fixed some typos in Details
 ---
 
 
