@@ -69,6 +69,14 @@ This extension contributes the following settings:
 
 ---
 
+## Known issues
+- Users may need to reload VS Code after setting the token to enable syntax highlighting.
+- The translation command may behave unexpectedly if the user switches windows while waiting for a response.
+
+We are actively working to address these issues in an upcoming release.
+
+---
+
 ## Coming soon
 - Some architectures (e.g. Power IBM-Z, RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel MMX ARM SME, ARM SVE/SVE2  ) are still in development.  
 
