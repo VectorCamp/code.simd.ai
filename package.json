@@ -2,7 +2,7 @@
   "name": "code-simd-ai",
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publisher": "VectorCamp",
   "engines": {
     "vscode": "^1.100.0"
@@ -88,7 +88,7 @@
       },
       {
         "command": "code.simd.ai.translateNeonToSSE",
-        "title": "SSE4.2"
+        "title": "Intel SSE4.2"
       },
       {
         "command": "code.simd.ai.translateSSEToVSX",
@@ -96,7 +96,7 @@
       },
       {
         "command": "code.simd.ai.translateVSXToSSE",
-        "title": "SSE4.2"
+        "title": "Intel SSE4.2"
       },
       {
         "command": "code.simd.ai.translateNeonToVSX",
@@ -127,7 +127,7 @@
       },
       {
         "id": "code.simd.ai.submenu.sse",
-        "label": "Translate from SSE4.2 to",
+        "label": "Translate from Intel SSE4.2 to",
         "group": "navigation"
       },
       {

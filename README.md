@@ -100,6 +100,10 @@ We are actively working to address these issues in an upcoming release.
 
 ## 1.0.3
 - Added keywords
+
+## 1.0.4
+- Fix model name
+
 ---
 
 
