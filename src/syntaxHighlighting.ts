@@ -18,8 +18,9 @@ import * as fs from 'fs';
 import { fetchTooltip } from './api/tooltipFetcher';
 import { fetchIntrinsicNames } from './api/simdAi';
 
-let decorationType: vscode.TextEditorDecorationType | null = null;
+
 let intrinsics: string[] = [];
+let decorationType: vscode.TextEditorDecorationType | null = null;
 
 export async function initIntrinsicHighlighting(context: vscode.ExtensionContext) {
   try {
@@ -28,44 +29,42 @@ export async function initIntrinsicHighlighting(context: vscode.ExtensionContext
     console.error('Failed to fetch intrinsics:', error);
   }
 
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(editor => {
-      if (editor) {highlightIntrinsics(editor);}
-    }),
-
-    vscode.workspace.onDidChangeTextDocument(event => {
-      const editor = vscode.window.activeTextEditor;
-      if (editor && event.document === editor.document) {
-        highlightIntrinsics(editor);
-      }
-    })
-  );
-
-  // Highlight on activation if an editor is already open
-  if (vscode.window.activeTextEditor) {
-    highlightIntrinsics(vscode.window.activeTextEditor);
+  if (!decorationType) {
+    decorationType = vscode.window.createTextEditorDecorationType({
+      backgroundColor: 'transparent',
+      fontWeight: 'bold',
+      textDecoration: `
+          none;
+          background: linear-gradient(90deg, #FFA500, #FF8C00, #FF4500);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+      `
+    });
   }
+
+  const highlightAllVisibleEditors = () => {
+    vscode.window.visibleTextEditors.forEach(editor => highlightIntrinsics(editor));
+  };
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor(() => highlightAllVisibleEditors()),
+    vscode.workspace.onDidChangeTextDocument(event => {
+      vscode.window.visibleTextEditors
+        .filter(editor => editor.document === event.document)
+        .forEach(editor => highlightIntrinsics(editor));
+    }),
+    vscode.window.onDidChangeVisibleTextEditors(() => highlightAllVisibleEditors())
+  );  
+
+  // Highlight all editors on activation
+  highlightAllVisibleEditors();
 }
 
-async function highlightIntrinsics(editor: vscode.TextEditor) {
-  if (!intrinsics.length) {
-    console.warn('No intrinsics loaded.');
+export async function highlightIntrinsics(editor: vscode.TextEditor) {
+  if (!intrinsics.length || !decorationType) {
+    // console.warn('No intrinsics loaded.');
     return;
   }
 
-  // Dispose old decoration
-  if (decorationType) {decorationType.dispose();}
-
-  decorationType = vscode.window.createTextEditorDecorationType({
-    backgroundColor: 'transparent',
-    fontWeight: 'bold',
-    textDecoration: `
-      none;
-      background: linear-gradient(90deg, #FFA500, #FF8C00, #FF4500);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    `
-  });
 
   const text = editor.document.getText();
   const decorations: vscode.DecorationOptions[] = [];
@@ -101,5 +100,6 @@ async function highlightIntrinsics(editor: vscode.TextEditor) {
 export function deactivateHighlighting() {
   if (decorationType) {
     decorationType.dispose();
+    decorationType = null;
   }
 }
