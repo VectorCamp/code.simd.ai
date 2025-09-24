@@ -23,7 +23,7 @@ import { translationState, clearState } from './translation/state';
 import { registerTranslateCommand } from './translation/translator';
 import { registerAcceptRejectCommands, registerEditSIMDCommand } from './translation/commands';
 import { TranslationCodeLensProvider } from './translation/codelens';
-import { initIntrinsicHighlighting, deactivateHighlighting } from './syntaxHighlighting';
+import { highlightIntrinsics, initIntrinsicHighlighting, deactivateHighlighting } from './syntaxHighlighting';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -48,6 +48,9 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	initIntrinsicHighlighting(context);
+	vscode.window.visibleTextEditors.forEach(editor => {
+        highlightIntrinsics(editor);
+    });
 }
 
 export function deactivate() {
