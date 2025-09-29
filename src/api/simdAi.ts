@@ -24,14 +24,14 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
   if (!apiToken) {return '⚠️ API token missing';}
 
   try {
-    const res = await fetch('https://simd.ai/api/chat/completions', {
+    const res = await fetch('https://staging.simd.ai/api/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiToken}`
       },
       body: JSON.stringify({
-        model: 'SIMD-ai-2506.1.ai-24b:latest',
+        model: 'SIMD-ai-2506.1.ai:24b',
         messages
       })
     });
@@ -66,7 +66,7 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   }
 
   try {
-    const response = await fetch('https://simd.ai/api/v1/plugin-intrinsics-list/get-intrinsics-list', {
+    const response = await fetch('https://staging.simd.ai/api/v1/plugin-intrinsics-list/get-intrinsics-list', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -149,7 +149,7 @@ export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | nu
   }
   
   try {
-    const response = await fetch(`https://simd.ai/api/v1/plugin-intrinsic-info/get-intrinsics-info`, {
+    const response = await fetch(`https://staging.simd.ai/api/v1/plugin-intrinsic-info/get-intrinsics-info`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -61,14 +61,14 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
         return; // handle missing token
       }
 
-      const response = await fetch('https://simd.ai/api/chat/completions', {
+      const response = await fetch('https://staging.simd.ai/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiToken}`
         },
         body: JSON.stringify({
-          model: "SIMD-ai-2506.1.ai-24b:latest",
+          model: "SIMD-ai-2506.1.ai:24b",
           messages: [{ role: "user", content: userPrompt }]
         })
       });
