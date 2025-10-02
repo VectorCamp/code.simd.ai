@@ -68,7 +68,7 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
           'Authorization': `Bearer ${apiToken}`
         },
         body: JSON.stringify({
-          model: "SIMD-ai-2506.1.ai-24b:latest",
+          model: 'SIMD-ai-2506.1.ai:24b',
           messages: [{ role: "user", content: userPrompt }]
         })
       });
