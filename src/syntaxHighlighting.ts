@@ -16,15 +16,14 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { fetchTooltip } from './api/tooltipFetcher';
-import { fetchIntrinsicNames } from './api/simdAi';
-
+import { getIntrinsics } from './intrinsicsCache';
 
 let intrinsics: string[] = [];
 let decorationType: vscode.TextEditorDecorationType | null = null;
 
 export async function initIntrinsicHighlighting(context: vscode.ExtensionContext) {
   try {
-    intrinsics = await fetchIntrinsicNames();
+    intrinsics = await getIntrinsics();
   } catch (error) {
     console.error('Failed to fetch intrinsics:', error);
   }

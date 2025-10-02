@@ -24,6 +24,7 @@ import { registerTranslateCommand } from './translation/translator';
 import { registerAcceptRejectCommands, registerEditSIMDCommand } from './translation/commands';
 import { TranslationCodeLensProvider } from './translation/codelens';
 import { highlightIntrinsics, initIntrinsicHighlighting, deactivateHighlighting } from './syntaxHighlighting';
+import { activate as activateCompletion } from './completionProvider'; // Update to correct filename
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -51,6 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.window.visibleTextEditors.forEach(editor => {
         highlightIntrinsics(editor);
     });
+
+	activateCompletion(context);
 }
 
 export function deactivate() {
