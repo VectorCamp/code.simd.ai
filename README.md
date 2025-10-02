@@ -107,6 +107,8 @@ We are actively working to address these issues in an upcoming release.
 ## 1.0.5
 - Fix split window highlighting
 
+## 1.0.6
+- Revert model name
 ---
 
 
