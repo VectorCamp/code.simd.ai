@@ -31,7 +31,7 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
         'Authorization': `Bearer ${apiToken}`
       },
       body: JSON.stringify({
-        model: 'SIMD-ai-2506.1.ai-24b:latest',
+        model: 'SIMD-ai-2506.1.ai:24b',
         messages
       })
     });

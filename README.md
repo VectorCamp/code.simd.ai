@@ -108,7 +108,10 @@ We are actively working to address these issues in an upcoming release.
 - Fix split window highlighting
 
 ## 1.0.6
-- Fix ai chat session switch issue
+- Revert model name
+
+## 1.0.7
+-Fix ai chat issues on session switching
 ---
 
 
