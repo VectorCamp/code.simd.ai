@@ -19,41 +19,41 @@ export async function activate(context: vscode.ExtensionContext) {
     languages.map(lang => ({ scheme: 'file', language: lang })),
     {
         provideCompletionItems(document, position) {
-        const linePrefix = document.lineAt(position).text.substring(0, position.character);
-        
-        // Match full identifier including underscores
-        const wordMatch = linePrefix.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
-        const prefix = wordMatch ? wordMatch[0] : '';
-        
-        if (!prefix) return undefined;
-        
-        const start = lowerBound(intrinsics, prefix);
-        const maxResults = 50;
-        const items: vscode.CompletionItem[] = [];
-        
-        for (let i = start; i < intrinsics.length && items.length < maxResults; i++) {
-            if (!intrinsics[i].startsWith(prefix)) break;
-            const name = intrinsics[i];
-            const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Function);
-            item.detail = 'SIMD Intrinsic';
-            
-            // Important: set these properties to improve filtering
-            item.filterText = name;
-            item.sortText = name;
-            
-            items.push(item);
-        }
-        return items;
+          const linePrefix = document.lineAt(position).text.substring(0, position.character);
+          
+          // Match full identifier including underscores
+          const wordMatch = linePrefix.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
+          const prefix = wordMatch ? wordMatch[0] : '';
+          
+          if (!prefix) return undefined;
+          
+          const start = lowerBound(intrinsics, prefix);
+          const maxResults = 50;
+          const items: vscode.CompletionItem[] = [];
+          
+          for (let i = start; i < intrinsics.length && items.length < maxResults; i++) {
+              if (!intrinsics[i].startsWith(prefix)) break;
+              const name = intrinsics[i];
+              const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Function);
+              item.detail = 'SIMD.info Intrinsic';
+              
+              // Important: set these properties to improve filtering
+              item.filterText = name;
+              item.sortText = name;
+              
+              items.push(item);
+          }
+          return items;
         },
         async resolveCompletionItem(item: vscode.CompletionItem) {
-        try {
-            const doc = await fetchTooltip(item.label.toString());
-            if (doc) item.documentation = new vscode.MarkdownString(doc);
-        } catch {}
+          try {
+              const doc = await fetchTooltip(item.label.toString());
+              if (doc) item.documentation = new vscode.MarkdownString(doc);
+          } catch {}
         return item;
         }
     },
-    '_' // Add underscore as a trigger character
+    '_','m','v' // trigger characters
     );
 
 
