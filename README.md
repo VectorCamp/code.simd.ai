@@ -111,7 +111,7 @@ We are actively working to address these issues in an upcoming release.
 - Revert model name
 
 ## 1.0.7
--Fix ai chat issues on session switching
+- Fix ai chat issues on session switching
 ---
 
 
