@@ -35,10 +35,6 @@ export async function activate(context: vscode.ExtensionContext) {
               const name = intrinsics[i];
               const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Function);
               item.detail = 'SIMD.info intrinsic';
-              
-              // DON'T set documentation here - let resolveCompletionItem handle it
-              // This ensures VSCode shows it in the side panel, not inline
-              
               item.filterText = name;
               item.sortText = name;
               
@@ -51,8 +47,8 @@ export async function activate(context: vscode.ExtensionContext) {
               const doc = await fetchTooltip(item.label.toString());
               if (doc) {
                 const markdown = new vscode.MarkdownString(doc);
-                markdown.isTrusted = true; // Allow command links and HTML
-                markdown.supportHtml = true; // Enable HTML rendering
+                markdown.isTrusted = true;
+                markdown.supportHtml = true; 
                 item.documentation = markdown;
               }
           } catch (err) {
