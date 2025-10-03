@@ -49,15 +49,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           await this.handleUserMessage(message.text);
           break;
         case 'requestHistory':
-          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
+          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) , sessionId: this.currentSessionId });
           break;
         case 'clearHistory':
           await clearChatHistory(this.context, this.currentSessionId);
-          webview.postMessage({ type: 'history', messages: [] });
+          webview.postMessage({ type: 'history', messages: [], sessionId: this.currentSessionId });
           break;
         case 'switchSession':
           this.currentSessionId = message.sessionId;
-          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) });
+          webview.postMessage({ type: 'history', messages: getChatHistory(this.context, this.currentSessionId) , sessionId: this.currentSessionId });
           break;
         case 'deleteSession':
             await clearChatHistory(this.context, message.sessionId);
@@ -79,13 +79,21 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     const webview = this._view?.webview;
     if (!webview) {return;}
 
-    const rawHistory = getChatHistory(this.context, this.currentSessionId);
+    const sessionId = this.currentSessionId;  
+    const rawHistory = getChatHistory(this.context, sessionId);
     const contextMessages = extractMessages(rawHistory);
     contextMessages.push({ role: 'user', content: userText });
 
-    const reply = await callSimdAiWithHistory(contextMessages);
-    await saveChatHistory(this.context, this.currentSessionId, userText, reply);
+    webview.postMessage({ type: 'responsePending', sessionId });
 
-    webview.postMessage({ type: 'response', text: reply });
+    try {
+      const reply = await callSimdAiWithHistory(contextMessages);
+      await saveChatHistory(this.context, sessionId, userText, reply);
+
+      // � send reply back to the same session, even if user switched
+      webview.postMessage({ type: 'response', text: reply, sessionId });
+    } catch (err: any) {
+      webview.postMessage({ type: 'responseError', error: String(err), sessionId });
+    }
   }
 }

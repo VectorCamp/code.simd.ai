@@ -37,16 +37,18 @@
         background-color: #f0f0f0;
         color: var(--vscode-editor-foreground);
         background-color: var(--vscode-editor-background);
+        width: fit-content;  
     }
 
     .user {
         color: var(--vscode-editor-foreground);
         align-self: flex-end;
-        text-align: right;
+        margin-left: auto;
     }
 
     .bot {
         color: var(--vscode-editor-foreground);
+        margin-right: auto;      /* ensures flush left */
         align-self: flex-start;
     }
 
@@ -250,11 +252,29 @@
         cursor: pointer;
         color: var(--vscode-editor-foreground);
     }
+
+    #chats{
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+    .chat { 
+        display: none; 
+    }
+    .chat.active { 
+        display: block; 
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+    }
+
 </style>
 </head>
 <body class="vscode">
 <div class="container">
-    <div id="chat"></div>
+    <div id="chats">
+        <div id="chat-Chat 1" class="chat active"></div>
+    </div>
 
     <div class="input-container">
         <textarea id="input" placeholder="Ask SIMD.ai..."></textarea>
@@ -286,47 +306,104 @@
 <script>
     const vscode = acquireVsCodeApi();
     const botLogoUri = "${botLogoUri}";
-
+    const responsePendingSessions = new Set();          // track sessions with pending responses
+    const pendingUserMessages = new Map();              // track pending user messages per session
     const input = document.getElementById('input');
 
-    input.addEventListener('input', () => {
+    function resizeInput() {
         input.style.height = 'auto'; // reset height
         input.style.height = Math.min(input.scrollHeight, 400) + 'px'; // grow up to 400px
-    });
+    }
 
-    function addMessage(text, className) {
-        const chat = document.getElementById('chat');
+    input.addEventListener('input', resizeInput);
+    input.addEventListener('focus', resizeInput);
+
+    function addMessage(text, className, sessionId) {
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+
         const div = document.createElement('div');
-        div.className = 'message ' + className;
+        div.classList.add('message', className);
         div.textContent = text;
         chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
+        const chatsContainer = document.getElementById('chats');
+        chatsContainer.scrollTop = chatsContainer.scrollHeight;
     }
-    function renderHistory(messages) {
+    function renderHistory(messages, sessionId) {
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+        
+        // Remove all messages except spinner
+        Array.from(chat.children).forEach(child => {
+            if (!child.id || !child.id.startsWith('spinner')) {
+                child.remove();
+            }
+        });
+
         for (const msg of messages) {
             if (msg.startsWith('SIMDAIuser: ')) {
                 const userText = msg.replace('SIMDAIuser: ', '');
-                addMessage(userText, 'user');
+                addMessage(userText, 'user', sessionId);
             } else if (msg.startsWith('SIMDAIbot: ')) {
                 const botText = msg.replace('SIMDAIbot: ', '');
                 const botName = 'SIMD.ai';
                 const botImageUrl = botLogoUri;
-                addBotResponse(botText, botName, botImageUrl);
+                addBotResponse(botText, botName, botImageUrl, sessionId);
             }
         }
+
+        if (pendingUserMessages.has(sessionId)) {
+            const pendingMessage = pendingUserMessages.get(sessionId);
+            if (pendingMessage) {
+                addMessage(pendingMessage, 'user', sessionId);
+            }
+        }
+        if (responsePendingSessions.has(sessionId)) {
+            const oldSpinner = document.getElementById(`spinner-${sessionId}`);
+            if (oldSpinner) oldSpinner.remove();
+            addSpinner(sessionId);
+        }
+        const chatsContainer = document.getElementById('chats');
+        chatsContainer.scrollTop = chatsContainer.scrollHeight;
+        
     }
-    function addSpinner() {
-        const chat = document.getElementById('chat');
+    function addSpinner(sessionId) {
+        
+        responsePendingSessions.add(sessionId);
+        let chat = document.getElementById(`chat-${sessionId}`);
+
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats'); // parent div for all sessions
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+        if (document.getElementById(`spinner-${sessionId}`)) return;
         const div = document.createElement('div');
         div.className = 'message bot';
-        div.id = 'spinner';
+        div.id = `spinner-${sessionId}`;
         div.innerHTML = '<span class="gradient-text">SIMD.ai</span> is thinking <span class="spinner"></span>';
         chat.appendChild(div);
-        chat.scrollTop = chat.scrollHeight;
+        const chatsContainer = document.getElementById('chats');
+        chatsContainer.scrollTop = chatsContainer.scrollHeight;
     }
 
-    function removeSpinner() {
-        const spinner = document.getElementById('spinner');
+    function removeSpinner(sessionId) {
+        responsePendingSessions.delete(sessionId);
+        const spinner = document.getElementById(`spinner-${sessionId}`);
         if (spinner) spinner.remove();
     }
     
@@ -384,8 +461,16 @@
     }
 
 
-    function addBotResponse(text, botName, botImageUrl) {
-        const chat = document.getElementById('chat');
+    function addBotResponse(text, botName, botImageUrl, sessionId) {
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+
         const container = document.createElement('div');
         container.className = 'message bot';
         container.style.display = 'flex';
@@ -402,7 +487,7 @@
         img.style.objectFit = 'cover';
         img.style.flexShrink = '0';
 
-        // Text container for bot name and response
+        // Text container
         const textContainer = document.createElement('div');
         textContainer.style.display = 'flex';
         textContainer.style.flexDirection = 'column';
@@ -417,15 +502,12 @@
 
         const responseElem = document.createElement('div');
         try {
-            // Parse markdown and handle code blocks
-            // const parsedText = marked.parse(text);
             let html = marked.parse(text);
             html = codeBlocksToTextareas(html);
             responseElem.innerHTML = html;
-            
         } catch (error) {
             console.error('Error parsing markdown:', error);
-            responseElem.textContent = text; // Fallback to plain text
+            responseElem.textContent = text; // fallback
         }
 
         textContainer.appendChild(nameElem);
@@ -435,7 +517,6 @@
         container.appendChild(textContainer);
 
         chat.appendChild(container);
-        chat.scrollTop = chat.scrollHeight;
     }
     
     document.addEventListener('click', function(e) {
@@ -454,35 +535,56 @@
 
     function sendMessage() {
         const input = document.getElementById('input');
-        const text = input.value.trim();    
-        if (!text) return;  
-            input.value = '';
-            addMessage(text, 'user');
-            addSpinner();
-            document.getElementById('sendBtn').disabled = true;
+        const text = input.value.trim();
+        if (!text) return;
 
-            vscode.postMessage({ type: 'send', text });
+        const activeTab = document.querySelector('.tab.active');
+        if (!activeTab) return;
+
+        const sessionId = activeTab.dataset.id;
+
+        input.value = '';
+        addMessage(text, 'user', sessionId);   // pass sessionId
+        pendingUserMessages.set(sessionId, text);
+        document.getElementById('sendBtn').disabled = true;
+
+        vscode.postMessage({ type: 'send', text, sessionId });
+    }
+
+    function clearChat(sessionId) {
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
         }
-        function clearChat() {
-            const chat = document.getElementById('chat');
-            chat.innerHTML = '';
-        }
-        function insertTextIntoChatInput(text) {
+
+        // Remove everything except spinner
+        Array.from(chat.children).forEach(child => {
+            if (!child.id || !child.id.startsWith('spinner')) {
+                child.remove();
+            }
+        });
+    }
+
+    function insertTextIntoChatInput(text) {
         const chatInput = document.getElementById('input');
-        
-        if (chatInput) {
-            chatInput.value = text;
-            chatInput.focus();
-            chatInput.style.height = 'auto';
-            chatInput.style.height = Math.min(chatInput.scrollHeight, 400) + 'px';
-        }
-            
-        }
-        document.getElementById('input').addEventListener('keydown', function(event) {
+        if (!chatInput) return;
+
+        chatInput.value = text;
+        chatInput.focus();
+        chatInput.style.height = 'auto';
+        chatInput.style.height = Math.min(chatInput.scrollHeight, 400) + 'px';
+    }
+
+    document.getElementById('input').addEventListener('keydown', function(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
-            if (sendBtn.disabled) return; // Prevent sending if already waiting for reply
+            const sendBtn = document.getElementById('sendBtn');
+            if (sendBtn.disabled) return; // Prevent sending if waiting for reply
             event.preventDefault(); // prevent newline
-            sendMessage(); // call your send function
+            sendMessage();
         }
     });
 
@@ -496,13 +598,17 @@
     window.addEventListener('message', event => {
         const message = event.data;
         if (message.type === 'history') {
-            clearChat(); 
-            renderHistory(message.messages);
+            clearChat(message.sessionId); 
+            renderHistory(message.messages, message.sessionId);
+        } else if (message.type === 'responsePending') {
+            addSpinner(message.sessionId);
+            document.getElementById('sendBtn').disabled = true;
         } else if (message.type === 'response') {
-            removeSpinner();
+            pendingUserMessages.delete(message.sessionId);
+            removeSpinner(message.sessionId);
             const botName = 'SIMD.ai';
             const botImageUrl = botLogoUri;
-            addBotResponse(message.text, botName, botImageUrl);
+            addBotResponse(message.text, botName, botImageUrl, message.sessionId);
             document.getElementById('sendBtn').disabled = false;
         } else if (message.command === 'insertUserMessage') {
             insertTextIntoChatInput(message.text);
@@ -513,19 +619,34 @@
             message.sessions.forEach(sessionId => {
                 const tab = createSessionTab(sessionId, sessionId === message.currentSession);
             });
+        } else if (message.type === 'error') {
+            removeSpinner(message.sessionId);
+            showError(`⚠️ ${message.error}`, message.sessionId);
+            document.getElementById('sendBtn').disabled = false;
         }
     });
     
 
     
 
-    function showError(msg) {
-        const errorDiv = document.getElementById('sessionError');
-        if (!errorDiv) return;
-        errorDiv.textContent = msg;
-        errorDiv.style.display = 'block';
-        setTimeout(() => errorDiv.style.display = 'none', 3000);
+    function showError(msg, sessionId) {
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+
+        const container = document.createElement('div');
+        container.className = 'message error';
+        container.style.color = 'red';
+        container.textContent = msg;
+        chat.appendChild(container);
+        chat.scrollTop = chat.scrollHeight;
     }
+    
     function createSessionTab(sessionId, isActive = false) {
         const sessionTabsContainer = document.getElementById('sessionTabs');
         const tab = document.createElement('div');
@@ -575,12 +696,28 @@
 
     
     function selectSessionTab(tabElement) {
-        let currentSessionId = 'Chat 1';
+        const sessionId = tabElement.dataset.id;
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         tabElement.classList.add('active');
-        currentSessionId = tabElement.dataset.id;
-        vscode.postMessage({ type: 'switchSession', sessionId: currentSessionId });
-        localStorage.setItem('lastActiveSession', currentSessionId);
+
+        document.querySelectorAll('.chat').forEach(chat => chat.classList.remove('active'));
+        let chat = document.getElementById(`chat-${sessionId}`);
+        if (!chat) {
+            const chatsContainer = document.getElementById('chats');
+            chat = document.createElement('div');
+            chat.id = `chat-${sessionId}`;
+            chat.classList.add('chat');
+            chatsContainer.appendChild(chat);
+        }
+        document.querySelectorAll('.chat').forEach(c => c.classList.remove('active'));
+        chat.classList.add('active');
+
+        // Request history from extension **every time we switch**
+        vscode.postMessage({ type: 'switchSession', sessionId });
+        vscode.postMessage({ type: 'requestHistory', sessionId });
+        
+        
+        localStorage.setItem('lastActiveSession', sessionId);
     }
 
     document.getElementById('sessionTabs').addEventListener('click', (e) => {
