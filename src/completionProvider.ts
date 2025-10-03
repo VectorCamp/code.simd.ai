@@ -21,7 +21,6 @@ export async function activate(context: vscode.ExtensionContext) {
         provideCompletionItems(document, position) {
           const linePrefix = document.lineAt(position).text.substring(0, position.character);
           
-          // Match full identifier including underscores
           const wordMatch = linePrefix.match(/[a-zA-Z_][a-zA-Z0-9_]*$/);
           const prefix = wordMatch ? wordMatch[0] : '';
           
@@ -35,9 +34,11 @@ export async function activate(context: vscode.ExtensionContext) {
               if (!intrinsics[i].startsWith(prefix)) break;
               const name = intrinsics[i];
               const item = new vscode.CompletionItem(name, vscode.CompletionItemKind.Function);
-              item.detail = 'SIMD.info Intrinsic';
+              item.detail = 'SIMD.info intrinsic';
               
-              // Important: set these properties to improve filtering
+              // DON'T set documentation here - let resolveCompletionItem handle it
+              // This ensures VSCode shows it in the side panel, not inline
+              
               item.filterText = name;
               item.sortText = name;
               
@@ -48,9 +49,16 @@ export async function activate(context: vscode.ExtensionContext) {
         async resolveCompletionItem(item: vscode.CompletionItem) {
           try {
               const doc = await fetchTooltip(item.label.toString());
-              if (doc) item.documentation = new vscode.MarkdownString(doc);
-          } catch {}
-        return item;
+              if (doc) {
+                const markdown = new vscode.MarkdownString(doc);
+                markdown.isTrusted = true; // Allow command links and HTML
+                markdown.supportHtml = true; // Enable HTML rendering
+                item.documentation = markdown;
+              }
+          } catch (err) {
+            console.error('Error fetching tooltip:', err);
+          }
+          return item;
         }
     },
     '_','m','v' // trigger characters
