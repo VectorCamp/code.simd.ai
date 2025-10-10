@@ -19,14 +19,9 @@ import fetch from 'node-fetch';
 
 import * as vscode from 'vscode';
 import { fetchIntrinsicInfo } from './simdAi';
-
-
-
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
 
 const tooltipCache: Record<string, string> = {};
-
-
 
 export async function fetchTooltip(word: string): Promise<string> {
   if (tooltipCache[word]) {return tooltipCache[word];}
@@ -99,6 +94,49 @@ export async function fetchTooltip(word: string): Promise<string> {
     return markdown;
   } catch (error) {
     console.error('Failed to fetch tooltip for', word, error);
+    return '';
+  }
+}
+
+
+import { fetchDatatypesByArch } from './datatypeFetcher';
+
+const datatypeTooltipCache: Record<string, string> = {};
+
+export async function fetchDatatypeTooltip(name: string): Promise<string> {
+  return ''; // Coming soon datatype tooltips
+  if (datatypeTooltipCache[name]) {return datatypeTooltipCache[name];}
+
+  try {
+    const datatypesByArch = await fetchDatatypesByArch();
+    if (!datatypesByArch || !Object.keys(datatypesByArch).length) {
+      console.warn('No datatypes available');
+      return '';
+    }
+
+    const md = new vscode.MarkdownString();
+    md.isTrusted = true;
+    md.supportHtml = true;
+
+    let found = false;
+    for (const [arch, names] of Object.entries(datatypesByArch)) {
+      if (names.includes(name)) {
+        found = true;
+        const link = `https://simd.info/datatype/${encodeURIComponent(name)}`;
+        md.appendMarkdown(`### [${name}](${link}) (${arch})\n`);
+        md.appendMarkdown(`Description for ${name} on ${arch}.\n`); 
+      }
+    }
+
+    if (!found) {
+      md.appendMarkdown(`No datatype info found for **${name}**`);
+    }
+
+    const markdown = md.value;
+    datatypeTooltipCache[name] = markdown;
+    return markdown;
+  } catch (error) {
+    console.error('Failed to fetch datatype tooltip for', name, error);
     return '';
   }
 }
