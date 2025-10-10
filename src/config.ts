@@ -24,9 +24,11 @@ export function getApiToken(): string | undefined {
   return token;
 }
 
-import * as dotenv from 'dotenv';
-import path from 'path';
+// import * as dotenv from 'dotenv';
+// import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export const PLUGIN_DEFAULT_TOKEN = "sk-b5204816b07e49ec8096c9e8b34f28bb";
+export const API_BASE = 'https://simd.ai/api';
+export const MODEL_NAME = 'SIMD-ai-2506.1.ai:24b';
