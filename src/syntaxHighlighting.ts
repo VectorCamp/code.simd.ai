@@ -18,6 +18,8 @@ import * as fs from 'fs';
 import { fetchDatatypeTooltip, fetchTooltip } from './api/tooltipFetcher';
 import { getIntrinsics } from './intrinsicsCache';
 import { fetchDatatypesByArch } from './api/datatypeFetcher';
+import { HighlightConfig } from './highlightConfig';
+
 
 let intrinsics: string[] = [];
 let decorationType: vscode.TextEditorDecorationType | null = null;
@@ -151,60 +153,26 @@ function createDecorations() {
 
   // Create datatype decorations by arch
   for (const arch of Object.keys(datatypesByArch)) {
-    let style: vscode.DecorationRenderOptions;
+    const cfg = HighlightConfig[arch.toUpperCase()] || HighlightConfig.DEFAULT;
 
-    if (currentMode === 'gradient') {
-      let gradient = '';
-      switch (arch.toUpperCase()) {
-        case 'NEON':
-          gradient = 'linear-gradient(90deg, #00FF7F, #32CD32, #228B22)';
-          break;
-        case 'INTEL':
-          gradient = 'linear-gradient(90deg, #00BFFF, #1E90FF, #4169E1)';
-          break;
-        case 'POWER':
-          gradient = 'linear-gradient(90deg, #7B68EE, #6A5ACD, #483D8B)';
-          break;
-        default:
-          gradient = 'linear-gradient(90deg, #ADFF2F, #7FFF00, #32CD32)';
-          break;
-      }
+    const style =
+      currentMode === 'gradient'
+        ? {
+            fontWeight: 'bold',
+            textDecoration: `
+              none;
+              background: ${cfg.gradient};
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+            `,
+          }
+        : {
+            color: cfg.flat,
+            fontWeight: 'bold',
+          };
 
-      style = {
-        fontWeight: 'bold',
-        textDecoration: `
-          none;
-          background: ${gradient};
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        `
-      };
-    } else if (currentMode === 'flat') {
-      let color = '';
-      switch (arch.toUpperCase()) {
-        case 'NEON':
-          color = '#32CD32';
-          break;
-        case 'INTEL':
-          color = '#1E90FF';
-          break;
-        case 'POWER':
-          color = '#6A5ACD';
-          break;
-        default:
-          color = '#7FFF00';
-          break;
-      }
-
-      style = {
-        color: color,
-        fontWeight: 'bold'
-      };
-    } else {
-      continue; // none mode
-    }
-
-    datatypeDecorationsByArch[arch] = vscode.window.createTextEditorDecorationType(style);
+    datatypeDecorationsByArch[arch] =
+      vscode.window.createTextEditorDecorationType(style);
   }
 }
 
