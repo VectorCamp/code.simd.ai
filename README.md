@@ -120,6 +120,8 @@ We are actively working to address these issues in an upcoming release.
 - Datatype highlighting
 - Refactoring backend api
 - Select highlight style
+- Fix bug on first session
+
 ---
 
 
