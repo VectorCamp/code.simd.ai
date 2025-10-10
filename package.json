@@ -2,7 +2,7 @@
   "name": "code-simd-ai",
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "VectorCamp",
   "engines": {
     "vscode": "^1.100.0"
@@ -117,6 +117,10 @@
       {
         "command": "code.simd.ai.editSIMD",
         "title": "Edit SIMD"
+      },
+      {
+        "command": "code.simd.ai.cycleHighlightMode",
+        "title": "Cycle SIMD Syntax Highlighting Mode"
       }
     ],
     "submenus": [

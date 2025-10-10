@@ -16,22 +16,21 @@
 
 import { get } from 'http';
 import { getApiToken } from '../config';
-import { PLUGIN_DEFAULT_TOKEN } from '../config';
-
+import { API_BASE, MODEL_NAME , PLUGIN_DEFAULT_TOKEN } from '../config';
 
 export async function callSimdAiWithHistory(messages: { role: string; content: string }[]): Promise<string> {
   const apiToken = getApiToken();
   if (!apiToken) {return '⚠️ API token missing';}
 
   try {
-    const res = await fetch('https://simd.ai/api/chat/completions', {
+    const res = await fetch(`${API_BASE}/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiToken}`
       },
       body: JSON.stringify({
-        model: 'SIMD-ai-2506.1.ai:24b',
+        model: MODEL_NAME,
         messages
       })
     });
@@ -56,7 +55,7 @@ let cachedIntrinsics: string[] | null = null;
 export async function fetchIntrinsicNames(): Promise<string[]> {
   let apiToken = getApiToken();
 
-  // if user has not specified api token, use predifined to only see Intel intrinsics
+  // if user has not specified api token, use predifined to only see Intel intrinsics and some Preview
   if (!apiToken) {
     apiToken = PLUGIN_DEFAULT_TOKEN;
   }
@@ -66,7 +65,7 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   }
 
   try {
-    const response = await fetch('https://simd.ai/api/v1/plugin-intrinsics-list/get-intrinsics-list', {
+    const response = await fetch(`${API_BASE}/v1/plugin-intrinsics-list/get-intrinsics-list`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -111,6 +110,32 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
   }
 }
 
+export async function sendToSimdAI(userPrompt: string) {
+  const apiToken = getApiToken();
+  if (!apiToken) {throw new Error('API token missing');}
+
+  const endpoint = `${API_BASE}/chat/completions`;
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiToken}`
+    },
+    body: JSON.stringify({
+      model: MODEL_NAME,
+      messages: [{ role: 'user', content: userPrompt }]
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 interface Prototype {
   key: string;
   output?: string;
@@ -149,7 +174,7 @@ export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | nu
   }
   
   try {
-    const response = await fetch(`https://simd.ai/api/v1/plugin-intrinsic-info/get-intrinsics-info`, {
+    const response = await fetch(`${API_BASE}/v1/plugin-intrinsic-info/get-intrinsics-info`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

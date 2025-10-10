@@ -115,6 +115,13 @@ We are actively working to address these issues in an upcoming release.
 
 ## 1.0.8
 - Add intrinsics autocomplete on typing!
+
+## 1.0.9
+- Datatype highlighting
+- Refactoring backend api
+- Select highlight style
+- Fix bug on first session
+
 ---
 
 

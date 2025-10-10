@@ -15,8 +15,7 @@
 */
 import * as vscode from 'vscode';
 import { translationState, clearState } from './state';
-import { getApiToken } from '../config';
-
+import { sendToSimdAI  } from '../api/simdAi';
 interface ChatMessage {
   role: string;
   content: string;
@@ -56,30 +55,8 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
     vscode.window.showInformationMessage(`Translating ${fromArch} to ${toArch}...`);
 
     try {
-      const apiToken = getApiToken();
-      if (!apiToken) {
-        return; // handle missing token
-      }
-
-      const response = await fetch('https://simd.ai/api/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiToken}`
-        },
-        body: JSON.stringify({
-          model: 'SIMD-ai-2506.1.ai:24b',
-          messages: [{ role: "user", content: userPrompt }]
-        })
-      });
+      const data = await sendToSimdAI(userPrompt) as ChatResponse;
       
-      if (!response.ok) {
-        vscode.window.showErrorMessage(`API error: ${response.statusText}`);
-        return;
-      }
-
-      const data = (await response.json()) as ChatResponse;
-
       const translated = data.choices?.[0]?.message?.content ?? '// No translation received';
 
       translationState.pendingText = translated;

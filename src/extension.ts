@@ -23,8 +23,8 @@ import { translationState, clearState } from './translation/state';
 import { registerTranslateCommand } from './translation/translator';
 import { registerAcceptRejectCommands, registerEditSIMDCommand } from './translation/commands';
 import { TranslationCodeLensProvider } from './translation/codelens';
-import { highlightIntrinsics, initIntrinsicHighlighting, deactivateHighlighting } from './syntaxHighlighting';
-import { activate as activateCompletion } from './completionProvider'; // Update to correct filename
+import { highlightIntrinsicsAndDatatypes, initIntrinsicHighlighting, deactivateHighlighting, cycleHighlightMode } from './syntaxHighlighting';
+import { activate as activateCompletion } from './completionProvider';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -47,10 +47,14 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.languages.registerCodeLensProvider({ scheme: 'file', language: '*' }, new TranslationCodeLensProvider())
 	);
-
+	context.subscriptions.push(
+		vscode.commands.registerCommand('code.simd.ai.cycleHighlightMode', () => {
+			cycleHighlightMode(context);
+		})
+	);
 	initIntrinsicHighlighting(context);
 	vscode.window.visibleTextEditors.forEach(editor => {
-        highlightIntrinsics(editor);
+        highlightIntrinsicsAndDatatypes(editor);
     });
 
 	activateCompletion(context);

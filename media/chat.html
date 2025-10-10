@@ -616,9 +616,15 @@
             const sessionTabsContainer = document.getElementById('sessionTabs');
             sessionTabsContainer.innerHTML = ''; 
 
-            message.sessions.forEach(sessionId => {
-                const tab = createSessionTab(sessionId, sessionId === message.currentSession);
-            });
+            if (message.sessions && message.sessions.length > 0) {
+                message.sessions.forEach(sessionId => {
+                    createSessionTab(sessionId, sessionId === message.currentSession);
+                });
+            } else {
+                // If extension returned no sessions, auto-create Chat 1
+                createDefaultTabIfMissing();
+                vscode.postMessage({ type: 'switchSession', sessionId: 'Chat 1' });
+            }
         } else if (message.type === 'error') {
             removeSpinner(message.sessionId);
             showError(`⚠️ ${message.error}`, message.sessionId);
@@ -678,7 +684,7 @@
             } else {
                 createDefaultTabIfMissing();
                 vscode.postMessage({ type: 'switchSession', sessionId: 'Chat 1' });
-                vscode.postMessage({ type: 'requestHistory', sessionId: 'Chat 1' });
+                // vscode.postMessage({ type: 'requestHistory', sessionId: 'Chat 1' });
             }
         };
 
@@ -785,6 +791,7 @@
         const createSessionBtn = document.getElementById('createSessionBtn');
         const lastSessionId = localStorage.getItem('lastActiveSession') || defaultSessionId;
 
+        
         sessionNameInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
