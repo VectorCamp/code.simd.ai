@@ -27,8 +27,8 @@ export const HighlightConfig: Record<
     flat: '#1E90FF',
   },
   POWER: {
-    gradient: 'linear-gradient(90deg, #7B68EE, #6A5ACD, #483D8B)',
-    flat: '#6A5ACD',
+    gradient: 'linear-gradient(90deg, #C3B6FF, #B7ACFF, #978EE5)',
+    flat: '#B7ACFF',
   },
   DEFAULT: {
     gradient: 'linear-gradient(90deg, #ADFF2F, #7FFF00, #32CD32)',
