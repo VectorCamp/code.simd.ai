@@ -26,6 +26,8 @@ import { TranslationCodeLensProvider } from './translation/codelens';
 import { highlightIntrinsicsAndDatatypes, initIntrinsicHighlighting, deactivateHighlighting, cycleHighlightMode } from './syntaxHighlighting';
 import { activate as activateCompletion } from './completionProvider';
 
+import { registerShowPerformanceGraphCommand } from './showPerformanceGraph';
+
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('Extension "code.simd.ai" is now active!');
@@ -58,6 +60,8 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
 	activateCompletion(context);
+	
+	registerShowPerformanceGraphCommand(context);
 }
 
 export function deactivate() {

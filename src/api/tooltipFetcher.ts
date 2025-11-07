@@ -21,34 +21,30 @@ import * as vscode from 'vscode';
 import { fetchIntrinsicInfo } from './simdAi';
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'; // Dev only — allow self-signed certs
 
-const tooltipCache: Record<string, string> = {};
+const tooltipCache: Record<string, vscode.MarkdownString> = {};
 
-export async function fetchTooltip(word: string): Promise<string> {
+export async function fetchTooltip(word: string): Promise<vscode.MarkdownString> {
   if (tooltipCache[word]) {return tooltipCache[word];}
 
   try {
     const data = await fetchIntrinsicInfo(word);
     if (!data) {
       console.warn(`No tooltip found for "${word}"`);
-      return '';
+      return new vscode.MarkdownString(`No tooltip found for "${word}"`);
     }
     
-    const md = new vscode.MarkdownString();
-    md.isTrusted = true;
+    const md = new vscode.MarkdownString(undefined, true);
+    md.isTrusted = { enabledCommands: ['code.simd.ai.showPerformanceGraph'] };
     md.supportHtml = true;
-
    
     // Handle new structure with multiple architectures
     if (Array.isArray(data.architectures) && data.architectures.length > 0) {
       for (const arch of data.architectures) {
-
-        
         const { simd, architecture, purpose, prototypes = [], link_to_doc } = arch;
-
         const simdLink = `https://simd.info/c_intrinsic/${encodeURIComponent(data.name)}?engine=${simd}`;
-
         const titleLine = [`**${simd || ''}**`, architecture || ''].filter(Boolean).join(' - ');
         md.appendMarkdown(`### [${data.name}](${simdLink})${titleLine ? ` (${titleLine})` : ''}\n`);
+
         const plainPurpose = purpose?.replace(/<\/?[^>]+(>|$)/g, '').trim();
         if (plainPurpose) {
           md.appendMarkdown(`${plainPurpose}\n`);
@@ -60,6 +56,8 @@ export async function fetchTooltip(word: string): Promise<string> {
             const inputList = proto.inputs?.join(', ') || '';
             const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
             md.appendMarkdown('```c\n' + line + '\n```\n');
+
+            addViewPerformanceData(md, proto, simd);
           }
         }
       }
@@ -84,17 +82,17 @@ export async function fetchTooltip(word: string): Promise<string> {
           const inputList = proto.inputs?.join(', ') || '';
           const line = `${proto.output || 'void'} result = ${proto.key}(${inputList});`;
           md.appendMarkdown('```c\n' + line + '\n```\n');
-      
+          
+          addViewPerformanceData(md, proto, data.simd || data.engine);
         }
       }
     }
 
-    const markdown = md.value;
-    tooltipCache[word] = markdown;
-    return markdown;
+    tooltipCache[word] = md;
+    return md;
   } catch (error) {
     console.error('Failed to fetch tooltip for', word, error);
-    return '';
+    return new vscode.MarkdownString(`Failed to fetch tooltip for "${word}"`);
   }
 }
 
@@ -138,5 +136,27 @@ export async function fetchDatatypeTooltip(name: string): Promise<string> {
   } catch (error) {
     console.error('Failed to fetch datatype tooltip for', name, error);
     return '';
+  }
+}
+
+function addViewPerformanceData(
+  md: vscode.MarkdownString, 
+  proto: any, 
+  simd?: string
+): void {
+  const hasGraphData =
+    (proto.llvm_mca && Object.keys(proto.llvm_mca).length > 0) ||
+    (proto.llvm_mca_neon && proto.llvm_mca_neon.length > 0);
+
+  if (hasGraphData) {
+    const id = `${proto.key}-${Math.random().toString(36).slice(2)}`;
+    (globalThis as any).simdPerformanceCache = (globalThis as any).simdPerformanceCache || {};
+    (globalThis as any).simdPerformanceCache[id] = {
+      key: proto.key,
+      simd,
+      llvm_mca: proto.llvm_mca,
+      llvm_mca_neon: proto.llvm_mca_neon
+    };
+    md.appendMarkdown(`*→ [Show Latency/Throughput](command:code.simd.ai.showPerformanceGraph?${JSON.stringify([id])})*\n`);
   }
 }

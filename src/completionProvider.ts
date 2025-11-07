@@ -44,13 +44,10 @@ export async function activate(context: vscode.ExtensionContext) {
         },
         async resolveCompletionItem(item: vscode.CompletionItem) {
           try {
-              const doc = await fetchTooltip(item.label.toString());
-              if (doc) {
-                const markdown = new vscode.MarkdownString(doc);
-                markdown.isTrusted = true;
-                markdown.supportHtml = true; 
-                item.documentation = markdown;
-              }
+            const doc = await fetchTooltip(item.label.toString());
+            if (doc) {
+              item.documentation = doc;
+            }
           } catch (err) {
             console.error('Error fetching tooltip:', err);
           }
