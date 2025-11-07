@@ -87,13 +87,13 @@ export function registerShowPerformanceGraphCommand(context: vscode.ExtensionCon
         <body>
           <h2>${key || ''} ${simd ? `(${simd})` : ''} Performance</h2>
           <canvas id="chart"></canvas>
-          <h3>Raw Performance Data (click headers to sort)</h3>
+          <h3>llvm_mca metrics (click headers to sort)</h3>
           <table id="perfTable">
             <thead>
               <tr>
                 <th data-key="cpu">CPU</th>
-                <th data-key="latency">Latency</th>
-                <th data-key="throughput">Throughput</th>
+                <th data-key="latency">Latency (Cycles)</th>
+                <th data-key="throughput">Throughput (IPC)</th>
               </tr>
             </thead>
             <tbody>
@@ -124,13 +124,13 @@ export function registerShowPerformanceGraphCommand(context: vscode.ExtensionCon
                 labels: perfData.map(p => p.cpu),
                 datasets: [
                   {
-                    label: 'Latency',
+                    label: 'Latency (Cycles)',
                     data: perfData.map(p => p.latency),
                     backgroundColor: latencyGradient,
                     borderRadius: 6
                   },
                   {
-                    label: 'Throughput',
+                    label: 'Throughput (IPC)',
                     data: perfData.map(p => p.throughput),
                     backgroundColor: throughputGradient,
                     borderRadius: 6
