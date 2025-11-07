@@ -2,7 +2,7 @@
   "name": "code-simd-ai",
   "displayName": "code.simd.ai",
   "description": "VScode plugin for porting of code between different cpu architectures",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "publisher": "VectorCamp",
   "engines": {
     "vscode": "^1.100.0"
@@ -82,6 +82,11 @@
       ]
     },
     "commands": [
+      {
+        "command": "code.simd.ai.showPerformanceGraph",
+        "title": "Show Performance Graph",
+        "category": "SIMD"
+      },
       {
         "command": "code.simd.ai.translateSSEToNeon",
         "title": "Arm NEON"
