@@ -122,6 +122,10 @@ We are actively working to address these issues in an upcoming release.
 - Select highlight style
 - Fix bug on first session
 
+## 1.0.10
+- Lighter tone in Power VSX datatypes
+- Add llvm_mca metrics
+- Add Latency/Throughput View
 ---
 
 

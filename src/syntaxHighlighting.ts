@@ -201,7 +201,7 @@ export async function highlightIntrinsicsAndDatatypes(editor: vscode.TextEditor)
     const promise = fetchTooltip(word).then(tooltip => {
       intrinsicDecorations.push({
         range,
-        hoverMessage: new vscode.MarkdownString(tooltip || '*Documentation not available.*')
+        hoverMessage: tooltip ||  new vscode.MarkdownString('*Documentation not available.*')
       });
     });
     promises.push(promise);
