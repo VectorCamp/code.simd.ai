@@ -126,6 +126,9 @@ We are actively working to address these issues in an upcoming release.
 - Lighter tone in Power VSX datatypes
 - Add llvm_mca metrics
 - Add Latency/Throughput View
+
+## 1.0.11
+- Fix simd.ai url in package
 ---
 
 
