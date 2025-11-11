@@ -24,38 +24,6 @@ export async function callSimdAiWithHistory(messages: { role: string; content: s
   return "Simd.ai is currently under development. Coming soon!";
 }
 
-// export async function callSimdAiWithHistory(messages: { role: string; content: string }[]): Promise<string> {
-//   const apiToken = getApiToken();
-//   if (!apiToken) {return '⚠️ API token missing';}
-
-//   try {
-//     const res = await fetch(`${API_BASE}/chat/completions`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${apiToken}`
-//       },
-//       body: JSON.stringify({
-//         model: MODEL_NAME,
-//         messages
-//       })
-//     });
-
-//     if (!res.ok) {
-//       const errorText = await res.text();
-//       console.error('SIMD.ai error:', errorText);
-//       return `⚠️ SIMD.ai error: ${res.statusText}`;
-//     }
-
-//     const data: any = await res.json();
-//     return data.choices?.[0]?.message?.content ?? '⚠️ No response content.';
-
-//   } catch (err: any) {
-//     console.error('SIMD.ai fetch failed:', err);
-//     return `⚠️ SIMD.ai call failed: ${err.message}`;
-//   }
-// }
-
 let cachedIntrinsics: string[] | null = null;
 
 export async function fetchIntrinsicNames(): Promise<string[]> {
@@ -120,31 +88,6 @@ export async function sendToSimdAI(userPrompt: string) {
   await new Promise(r => setTimeout(r, 10)); // small async delay
   return "Simd.ai is currently under development. Coming soon!";
 }
-// export async function sendToSimdAI(userPrompt: string) {
-//   const apiToken = getApiToken();
-//   if (!apiToken) {throw new Error('API token missing');}
-
-//   const endpoint = `${API_BASE}/chat/completions`;
-
-//   const response = await fetch(endpoint, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Authorization': `Bearer ${apiToken}`
-//     },
-//     body: JSON.stringify({
-//       model: MODEL_NAME,
-//       messages: [{ role: 'user', content: userPrompt }]
-//     })
-//   });
-
-//   if (!response.ok) {
-//     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-//   }
-
-//   const data = await response.json();
-//   return data;
-// }
 
 interface Prototype {
   key: string;
