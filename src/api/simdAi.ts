@@ -17,37 +17,11 @@
 import { get } from 'http';
 import { getApiToken } from '../config';
 import { API_BASE, MODEL_NAME , PLUGIN_DEFAULT_TOKEN } from '../config';
+import * as vscode from 'vscode';
 
 export async function callSimdAiWithHistory(messages: { role: string; content: string }[]): Promise<string> {
-  const apiToken = getApiToken();
-  if (!apiToken) {return '⚠️ API token missing';}
-
-  try {
-    const res = await fetch(`${API_BASE}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiToken}`
-      },
-      body: JSON.stringify({
-        model: MODEL_NAME,
-        messages
-      })
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('SIMD.ai error:', errorText);
-      return `⚠️ SIMD.ai error: ${res.statusText}`;
-    }
-
-    const data: any = await res.json();
-    return data.choices?.[0]?.message?.content ?? '⚠️ No response content.';
-
-  } catch (err: any) {
-    console.error('SIMD.ai fetch failed:', err);
-    return `⚠️ SIMD.ai call failed: ${err.message}`;
-  }
+  await new Promise(r => setTimeout(r, 10)); // small async delay
+  return "Simd.ai is currently under development. Coming soon!";
 }
 
 let cachedIntrinsics: string[] | null = null;
@@ -55,8 +29,9 @@ let cachedIntrinsics: string[] | null = null;
 export async function fetchIntrinsicNames(): Promise<string[]> {
   let apiToken = getApiToken();
 
-  // if user has not specified api token, use predifined to only see Intel intrinsics and some Preview
+  // if user has not specified api token, use predifined to only see Intel intrinsics and some Preview, disabled for now
   if (!apiToken) {
+    vscode.window.showInformationMessage("⚠️ Please get your API token from https://simd.ai");
     apiToken = PLUGIN_DEFAULT_TOKEN;
   }
 
@@ -109,31 +84,9 @@ export async function fetchIntrinsicNames(): Promise<string[]> {
     return [];
   }
 }
-
 export async function sendToSimdAI(userPrompt: string) {
-  const apiToken = getApiToken();
-  if (!apiToken) {throw new Error('API token missing');}
-
-  const endpoint = `${API_BASE}/chat/completions`;
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiToken}`
-    },
-    body: JSON.stringify({
-      model: MODEL_NAME,
-      messages: [{ role: 'user', content: userPrompt }]
-    })
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data;
+  await new Promise(r => setTimeout(r, 10)); // small async delay
+  return "Simd.ai is currently under development. Coming soon!";
 }
 
 interface Prototype {
@@ -170,6 +123,7 @@ export async function fetchIntrinsicInfo(word: string): Promise<TooltipData | nu
 
   // if user has not specified api token, use predifined to only see Intel intrinsics
   if (!apiToken) {
+    vscode.window.showInformationMessage("⚠️ Please get your API token from https://simd.ai");
     apiToken = PLUGIN_DEFAULT_TOKEN;
   }
   

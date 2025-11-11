@@ -29,11 +29,12 @@ import fetch from 'node-fetch';
 
 import { API_BASE, getApiToken } from '../config';
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
+import * as vscode from 'vscode';
 
 export async function fetchDatatypesByArch(): Promise<Record<string, string[]>> {
   const apiKey = getApiToken();
   if (!apiKey) {
+    vscode.window.showInformationMessage("⚠️ Please get your API token from https://simd.ai");
     console.warn('⚠️ API key missing');
     return {};
   }

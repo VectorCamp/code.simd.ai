@@ -57,8 +57,7 @@ Please provide the code as text, don't enclose it in \`\`\` code \`\`\`\n\n${sel
     try {
       const data = await sendToSimdAI(userPrompt) as ChatResponse;
       
-      const translated = data.choices?.[0]?.message?.content ?? '// No translation received';
-
+      const translated = data.choices?.[0]?.message?.content ?? '//Simd.ai is currently under development. Coming soon!';
       translationState.pendingText = translated;
       const cleanTranslation = translated.replace(/```[a-z]*\n?/g, '').replace(/```/g, '').trim();
       const formattedBlock = `\n${cleanTranslation}\n`;
