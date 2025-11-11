@@ -2,7 +2,7 @@
 
 Supercharge SIMD development directly in your IDE.
 
-AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX, and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
+Syntax Highlighting Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX,Power IBM-Z and more—right inside your editor. Smart intrinsics highlighting, instant conversions, and seamless dev workflow integration.
 
 ## Example 1 – VSX
 ![VSX Example](media/power_vsx_example.png)
@@ -15,8 +15,8 @@ AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power V
 
 
 ## Features
-- **AI-assisted SIMD Code Porting**  
-  Automatically translate SIMD code across architectures like Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX in real-time.  
+<!-- - **AI-assisted SIMD Code Porting**  
+  Automatically translate SIMD code across architectures like Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX in real-time.   -->
 
 
 - **Smart Intrinsics Highlighting**  
@@ -27,37 +27,37 @@ AI-assisted SIMD code porting across Intel SSE4.2, AVX2, AVX512,Arm NEON,Power V
     Your browser does not support the video tag.
 </video>
 
-- **AI Chat Sessions**  
-  Engage with a specialized SIMD AI for explanations, translations, and architecture-specific guidance. Maintain multiple chat sessions across projects.
+<!-- - **AI Chat Sessions**  
+  Engage with a specialized SIMD AI for explanations, translations, and architecture-specific guidance. Maintain multiple chat sessions across projects. -->
 
-<video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/ai_chat.mp4">
+<!-- <video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/ai_chat.mp4">
     <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
     Your browser does not support the video tag.
-</video>
+</video> -->
 
-- **Free & Premium Architectures**  
-  - Free: Intel SSE4.2 and AVX2) and Arm NEON and Power VSX with brief coverage (~5%)
-  - Premium (requires SIMD.ai paid plan): Intel AVX512, Arm NEON, Power VSX
+- **Standard Architectures**  
+  - Standard (requires SIMD.ai paid plan): Intel SSE4.2, AVX2, AVX512,Arm NEON,Power VSX,Power IBM-Z 
+  <!-- - Premium (requires SIMD.ai paid plan): Intel AVX512, Arm NEON, Power VSX -->
 
-- **Lightning Fast Porting**
-  Translate your SIMD code in seconds, saving hours of manual work.
+<!-- - **Lightning Fast Porting**
+  Translate your SIMD code in seconds, saving hours of manual work. -->
 
-<video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/full_translation.mp4">
+<!-- <video id="demo-video" class="demo-video" autoplay="" muted="" loop="" playsinline="" preload="auto" disablepictureinpicture="" controlslist="nodownload nofullscreen noremoteplayback" src="https://code.simd.ai/images/vids/full_translation.mp4">
     <source src="https://code.simd.ai/images/videos/chatting_trimmed_final.mp4" type="video/mp4">
     Your browser does not support the video tag.
-</video>
+</video> -->
 
 
-- **Better Results**  
-  Based on SIMD.info data for higher accuracy than generic LLMs, including ChatGPT or Claude.
+<!-- - **Better Results**  
+  Based on SIMD.info data for higher accuracy than generic LLMs, including ChatGPT or Claude.(AI translation disabled for now) -->
 
 ---
 
 ## Requirements
 
 - Visual Studio Code (latest stable version recommended)
-- Internet connection for AI translation and chat features
-- SIMD.ai account for premium architectures and AI translation
+<!-- - Internet connection for AI translation and chat features -->
+- SIMD.ai account for premium architectures(AI translation disabled for now)
 
 ---
 
@@ -78,7 +78,7 @@ We are actively working to address these issues in an upcoming release.
 ---
 
 ## Coming soon
-- Some architectures (e.g. Power IBM-Z, RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel AMX, ARM SME2, ARM SVE/SVE2  ) are still in development.  
+- Some architectures (e.g. RVV 1.0,LOONGSON LSX/LASX, MIPS/MSA,Intel AMX, ARM SME2, ARM SVE/SVE2  ) are still in development.  
 
 ---
 
@@ -87,7 +87,6 @@ We are actively working to address these issues in an upcoming release.
 ### 0.0.1
 - Initial release of **code.simd.ai**.
 - Added AI chat sessions for code guidance.
-
 
 ### 0.0.2
 - Fixes on Hover Tooltip
@@ -129,6 +128,9 @@ We are actively working to address these issues in an upcoming release.
 
 ## 1.0.11
 - Fix simd.ai url in package
+
+## 1.0.12
+- Temporarily disable AI support.
 ---
 
 
